@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:paddingBottom="2dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="2dp" >
+
+    <TextView
+        android:id="@+id/mp3name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/multiple_checkbox"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/mp3size"
+        android:focusable="false"
+        android:gravity="center|left" />
+
+    <CheckBox
+        android:id="@+id/multiple_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:focusable="false"
+        android:clickable="false"
+        android:gravity="right" />
+
+    <TextView
+        android:id="@+id/mp3size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/mp3name"
+        android:layout_alignTop="@+id/mp3name"
+        android:layout_toLeftOf="@+id/multiple_checkbox"
+        android:focusable="false"
+        android:gravity="center" />
+
+</RelativeLayout>
