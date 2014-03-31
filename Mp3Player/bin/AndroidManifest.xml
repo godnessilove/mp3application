@@ -28,14 +28,18 @@
         </activity>
         <activity
             android:name="com.example.mp3player.Mp3PlayerActivity"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:parentActivityName="com.example.mp3player.MainActivity">
+            <meta-data 
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.example.mp3player.MainActivity"/>
         </activity>
         
         <activity
-            android:name="com.example.mp3player.ChooseMp3Activity"
-            android:launchMode="singleTask" >
+            android:name="com.example.mp3player.ChooseMp3Activity">
         </activity>
 
+        
         <service android:name="com.example.service.DownLoadService" >
         </service>
         <service android:name="com.example.service.Mp3PlayService" >

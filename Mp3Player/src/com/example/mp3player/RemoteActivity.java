@@ -60,7 +60,7 @@ public class RemoteActivity extends ListFragment {
 		if (UPDATE == item.getItemId()) {
 			new Thread() {
 				public void run() {
-					list = DownLoad("http://192.168.0.101:8080/mp3/resources.xml");
+					list = DownLoad("http://192.168.2.10:8080/mp3/resources.xml");
 					System.out.println("下载列表成功：" + list);
 					handler.post(s);
 				}

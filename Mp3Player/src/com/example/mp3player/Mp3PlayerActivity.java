@@ -3,6 +3,7 @@ package com.example.mp3player;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,6 +24,8 @@ import com.example.lrc.LrcProcess;
 import com.example.service.Mp3PlayService;
 import com.example.sqlite.DProvider;
 
+
+@SuppressLint("CommitPrefEdits")
 public class Mp3PlayerActivity extends Activity {
 	private ImageButton button1 = null;
 	private ImageButton button2 = null;
@@ -46,6 +50,8 @@ public class Mp3PlayerActivity extends Activity {
 	
 	private String mp3listname;
 	private Receiver receiver ;
+	//用来判断广播是否已经注册
+	private Boolean ISREGISTER = false;
 	//设置接收广播的条件
 	public static final String UPDATE_ACTION = "chris.mp3.action.UPDATE_ACTION";
 	
@@ -60,6 +66,10 @@ public class Mp3PlayerActivity extends Activity {
 		mp3listname = intent.getStringExtra("mp3listname");
 		mp3name = intent.getStringExtra("mp3name");
 		mp3path = intent.getStringExtra("mp3path");
+		
+		SharedPreferences sdpfs = getPreferences(LocalActivity.SPINNER_STATE);
+		SharedPreferences.Editor ed = sdpfs.edit();
+		ed.putString("spinner_value", mp3listname);
 		
 		button1 = (ImageButton) findViewById(R.id.imageButton1);
 		button2 = (ImageButton) findViewById(R.id.imageButton2);
@@ -123,6 +133,7 @@ public class Mp3PlayerActivity extends Activity {
 		receiver = new Receiver();
 		IntentFilter filter = new IntentFilter(Mp3PlayerActivity.UPDATE_ACTION);
 		Mp3PlayerActivity.this.registerReceiver(receiver, filter);
+		ISREGISTER = true;
 		
 		handler.removeCallbacksAndMessages(null);
 		handler.post(updatemp3name);
@@ -140,6 +151,10 @@ public class Mp3PlayerActivity extends Activity {
 	@Override
 	protected void onStop() {
 		System.out.println("activity 停止");
+		if(ISREGISTER){
+		unregisterReceiver(receiver);
+		ISREGISTER = false;
+		}
 		handler.removeCallbacksAndMessages(null);// 点其他歌曲播放的时候，删掉前一个歌词的线程
 		super.onStop();
 	}
@@ -308,12 +323,19 @@ public class Mp3PlayerActivity extends Activity {
 		}
 		
 	}
+
 	
+	
+	
+
 	@Override
 	protected void onDestroy() {
 		System.out.println("activity 被销毁");
 		unbindService(conn);
+		if(ISREGISTER){
 		unregisterReceiver(receiver);
+		ISREGISTER = false;
+		}
 		super.onDestroy();
 	}
 

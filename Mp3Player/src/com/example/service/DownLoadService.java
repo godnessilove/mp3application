@@ -62,10 +62,10 @@ public class DownLoadService extends Service {
 		public void run() {
 			try {
 				// œ¬‘ÿmp3
-				hdl.downFile("http://192.168.0.101:8080/mp3/",
+				hdl.downFile("http://192.168.2.10:8080/mp3/",
 						downmp3path, mp3info.getMp3name());
 				// œ¬‘ÿ∏Ë¥ 
-				hdl.downFile("http://192.168.0.101:8080/mp3/", downlrcpath,
+				hdl.downFile("http://192.168.2.10:8080/mp3/", downlrcpath,
 						mp3info.getMp3name().replace("mp3", "lrc"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

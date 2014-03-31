@@ -64,9 +64,6 @@ public class HttpDownLoad {
 				long feespace = fileutil.getSDFeeSpace();
 				long availablespace = fileutil.getSDAvailableSpace();
 				long blockspace = fileutil.getSDBlockSpace();
-				System.out.println("feespace is " + feespace);
-				System.out.println("availablespace is " + availablespace);
-				System.out.println("blockspace is " + blockspace);
 				if (availablespace > urlconnect.getContentLength()) {
 					fileutil.writeDate(path, filenames, input);
 				} else

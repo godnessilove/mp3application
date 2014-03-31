@@ -12,8 +12,10 @@ import com.example.sqlite.DProvider;
 import com.example.sqlite.DateBaseHelper;
 import com.example.sqlite.PlayMp3ListTable;
 
+import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +26,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 
 
+@SuppressLint("CommitPrefEdits")
 public class ChooseMp3Activity extends ListActivity {
 	private String listname;
 	private mp3ListAdapter listadapter;
@@ -32,13 +35,15 @@ public class ChooseMp3Activity extends ListActivity {
 	private Cursor cursor;
 	private Handler handler;
 	private DProvider dprovider;
+	private SharedPreferences mpfs;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		System.out.println("choose activity onCreate");
 		Intent intent = getIntent();
 		listname = intent.getStringExtra("listname");
-
+		mpfs = getPreferences(LocalActivity.SPINNER_STATE);
+		
 		setContentView(R.layout.addmp3button);
 
 		button1 = (Button) findViewById(R.id.add);
@@ -148,7 +153,11 @@ public class ChooseMp3Activity extends ListActivity {
 				}
 			}
 			dprovider.insertList(listname, chooselist);
-			finish();
+			SharedPreferences.Editor ed = mpfs.edit();
+			ed.putString("spinner_value", listname);
+			ed.commit();
+			System.out.println(mpfs.getString("spinner_value", "0"));
+			ChooseMp3Activity.this.finish();
 		}
 	}
 

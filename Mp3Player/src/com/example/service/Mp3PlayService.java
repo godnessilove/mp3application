@@ -6,9 +6,11 @@ import java.util.Map;
 import com.example.mp3player.Mp3PlayerActivity;
 import com.example.sqlite.DProvider;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -21,6 +23,7 @@ import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 
+@SuppressLint("NewApi")
 public class Mp3PlayService extends Service implements
 		MediaPlayer.OnErrorListener {
 	private String msg = null;
@@ -78,18 +81,21 @@ public class Mp3PlayService extends Service implements
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		msg = intent.getStringExtra("msg");
-		mp3path = intent.getStringExtra("mp3path");
-		mp3name = intent.getStringExtra("mp3name");
-		mp3listname = intent.getStringExtra("mp3listname");
 		if (msg.equals("START")) {
 			// 如果沒有播放器
 			if (m == null) {
+				mp3path = intent.getStringExtra("mp3path");
+				mp3name = intent.getStringExtra("mp3name");
+				mp3listname = intent.getStringExtra("mp3listname");
 				initMediaPlayer();
 				initMp3Notifi();
 				getAudioFocus();
 			} 
 			//切换歌曲的时候
 			else if (mp3name.equals(intent.getStringExtra("mp3name")) == false) {
+				mp3path = intent.getStringExtra("mp3path");
+				mp3name = intent.getStringExtra("mp3name");
+				mp3listname = intent.getStringExtra("mp3listname");
 				initMediaPlayer();
 				initMp3Notifi();
 				mp3start();
@@ -220,9 +226,24 @@ public class Mp3PlayService extends Service implements
 			builder = new NotificationCompat.Builder(getApplicationContext());
 			Intent intent = new Intent(getApplicationContext(),
 					com.example.mp3player.Mp3PlayerActivity.class);
-			PendingIntent pendingintent = PendingIntent.getActivity(
+			String lrcpath = mp3path.replace("mp3", "lrc");
+			intent.putExtra("lrcpath", lrcpath);
+			intent.putExtra("mp3name", mp3name);
+			intent.putExtra("mp3path", mp3path);
+			intent.putExtra("mp3listname", mp3listname);
+			//新建个栈 把black stack放入这个栈里，为了让通知打开的activity按返回键可以回到播放类表，这里必须要在mainfast里配置与activity亲近的activity
+			TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+			stackBuilder.addParentStack(Mp3PlayerActivity.class);
+			stackBuilder.addNextIntent(intent);
+			PendingIntent pendingintent =
+			        stackBuilder.getPendingIntent(
+			            0,
+			            PendingIntent.FLAG_UPDATE_CURRENT
+			        );
+			
+			/*PendingIntent pendingintent = PendingIntent.getActivity(
 					getApplicationContext(), 0, intent,
-					PendingIntent.FLAG_UPDATE_CURRENT);
+					PendingIntent.FLAG_UPDATE_CURRENT);*/
 			builder.setContentIntent(pendingintent);
 			builder.setSmallIcon(android.R.drawable.ic_media_play);
 			builder.setOngoing(true);
@@ -232,7 +253,6 @@ public class Mp3PlayService extends Service implements
 		startForeground(threadid, builder.build());
 	}
 	
-
 	OnCompletionListener completion = new OnCompletionListener() {
 		
 		@Override
