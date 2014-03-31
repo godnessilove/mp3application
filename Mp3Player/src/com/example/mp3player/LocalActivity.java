@@ -155,12 +155,14 @@ public class LocalActivity extends ListFragment {
 			dprovider.deleteDate(listname);
 			// LocalActivity.this.onResume();
 			spinner.setSelection(0);
+			break;
 		case 1:
-			System.out.println(item.getItemId());
+			System.out.println("item is " + item.getItemId());
 			Intent intent = new Intent();
 			intent.setClass(getActivity(), ChooseMp3Activity.class);
 			intent.putExtra("listname", listname);
 			startActivity(intent);
+			break;
 		}
 
 		return super.onOptionsItemSelected(item);

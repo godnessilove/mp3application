@@ -36,7 +36,8 @@
         </activity>
         
         <activity
-            android:name="com.example.mp3player.ChooseMp3Activity">
+            android:name="com.example.mp3player.ChooseMp3Activity"
+            android:finishOnTaskLaunch="true">
         </activity>
 
         

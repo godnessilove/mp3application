@@ -43,7 +43,7 @@ public class ChooseMp3Activity extends ListActivity {
 		Intent intent = getIntent();
 		listname = intent.getStringExtra("listname");
 		mpfs = getPreferences(LocalActivity.SPINNER_STATE);
-		
+		System.out.println("listname is " + listname);
 		setContentView(R.layout.addmp3button);
 
 		button1 = (Button) findViewById(R.id.add);
