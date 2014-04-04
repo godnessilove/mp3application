@@ -18,6 +18,7 @@ public class DownLoadService extends Service {
 	private String downmp3path = "mp3";
 	private String downlrcpath = "lrc";
 	private HttpDownLoad hdl;
+	private int resault;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -41,11 +42,11 @@ public class DownLoadService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Mp3Info mp3info = (Mp3Info) intent.getSerializableExtra("mp3info");
-		//¼ÓÅĞ¶Ï£¬Èç¹ûÕıÔÚÏÂÔØÔò²»½øĞĞÒÔÏÂ²Ù×÷
-		// Æô¶¯ÏÂÔØÏß³Ì
+		// åŠ åˆ¤æ–­ï¼Œå¦‚æœæ­£åœ¨ä¸‹è½½åˆ™ä¸è¿›è¡Œä»¥ä¸‹æ“ä½œ
+		// å¯åŠ¨ä¸‹è½½çº¿ç¨‹
 		DownLoad download = new DownLoad(mp3info);
 		new Thread(download).start();
-		// Æô¶¯¸üĞÂÍ¨ÖªÀ¸½ø¶ÈÌõÏß³Ì
+		// å¯åŠ¨æ›´æ–°é€šçŸ¥æ è¿›åº¦æ¡çº¿ç¨‹
 		Updateinfo updateinfo = new Updateinfo(mp3info);
 		new Thread(updateinfo).start();
 		return super.onStartCommand(intent, flags, startId);
@@ -60,17 +61,12 @@ public class DownLoadService extends Service {
 		}
 
 		public void run() {
-			try {
-				// ÏÂÔØmp3
-				hdl.downFile("http://192.168.2.10:8080/mp3/",
-						downmp3path, mp3info.getMp3name());
-				// ÏÂÔØ¸è´Ê
-				hdl.downFile("http://192.168.2.10:8080/mp3/", downlrcpath,
-						mp3info.getMp3name().replace("mp3", "lrc"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// ä¸‹è½½mp3
+			resault = hdl.downFile("http://192.168.2.13:8080/mp3/",
+					downmp3path, mp3info.getMp3name());
+			// ä¸‹è½½æ­Œè¯
+			hdl.downFile("http://192.168.2.13:8080/mp3/", downlrcpath, mp3info
+					.getMp3name().replace("mp3", "lrc"));
 		}
 	}
 
@@ -88,38 +84,40 @@ public class DownLoadService extends Service {
 
 		@Override
 		public void run() {
-			threadid = Thread.currentThread().hashCode();// ¸üĞÂÍ¨ÖªÀ¸µÄÏß³Ìid£¬ÒÔ´Ë×÷ÎªÍ¨ÖªµÄid£¬ÊµÏÖ¶àÍ¨ÖªÍ¬Ê±¸üĞÂ
-			//³õÊ¼»¯Í¨Öª¡£Ã¿´Î¶¼ĞÂ½¨Ò»¸öÍ¨Öª
+			threadid = Thread.currentThread().hashCode();// æ›´æ–°é€šçŸ¥æ çš„çº¿ç¨‹idï¼Œä»¥æ­¤ä½œä¸ºé€šçŸ¥çš„idï¼Œå®ç°å¤šé€šçŸ¥åŒæ—¶æ›´æ–°
+			// åˆå§‹åŒ–é€šçŸ¥ã€‚æ¯æ¬¡éƒ½æ–°å»ºä¸€ä¸ªé€šçŸ¥
 			manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			builder = new NotificationCompat.Builder(getApplicationContext());
 			builder.setSmallIcon(R.drawable.arrow_down_float)
 					.setProgress(100, 0, false)
 					.setContentTitle(mp3info.getMp3name()).setContentInfo("0%")
-					.setContentText("×¼±¸ÏÂÔØ");
+					.setContentText("å‡†å¤‡ä¸‹è½½").setOngoing(true);
 			manager.notify(threadid, builder.build());
-			System.out.println("×¼±¸ÏÂÔØ");
-			//¸üÑ­»·3Ãë¸üĞÂÒ»´Î
+			// æ›´å¾ªç¯3ç§’æ›´æ–°ä¸€æ¬¡
 			while (percentage <= 100) {
-				System.out
-						.println("¸üĞÂÏß³ÌID " + threadid + "ÏÂÔØ°Ù·ÖÊıÎª" + percentage);
-				// »ñÈ¡µ±Ç°ÏÂÔØ½ø¶È
+				if (-1 == resault) {
+					System.out.println("resault is " + resault);
+					System.out.println("ä¸‹è½½å‡ºé”™");
+					builder.setContentText("ä¸‹è½½å‡ºé”™").setOngoing(false);
+					manager.notify(threadid, builder.build());
+					break;
+				}
+				// è·å–å½“å‰ä¸‹è½½è¿›åº¦
 				percentage = hdl.downPercentage(mp3info.getMp3name(),
 						mp3info.getMp3size(), downmp3path);
 				if (percentage > 0 && percentage < 100) {
 					builder.setProgress(100, percentage, false)
-							.setContentText("ÕıÔÚÏÂÔØ")
-							.setContentInfo(percentage + "%");
-					System.out.println("¸üĞÂÍ¨ÖªID " + threadid);
-					manager.notify(threadid,  builder.build());
+							.setContentText("æ­£åœ¨ä¸‹è½½")
+							.setContentInfo(percentage + "%").setOngoing(true);
+					manager.notify(threadid, builder.build());
 				} else if (100 == percentage) {
-					builder.setContentText("ÏÂÔØÍê³É").setProgress(0, 0, false)
-							.setContentInfo("100%");
-					manager.notify(threadid,  builder.build());
-					System.out.println("ÏÂÔØÍê³É");
+					builder.setContentText("ä¸‹è½½å®Œæˆ").setProgress(0, 0, false)
+							.setContentInfo("100%").setOngoing(false);
+					manager.notify(threadid, builder.build());
 					break;
 				}
 				try {
-					Thread.sleep(3 * 1000);//ĞİÃß3Ãë
+					Thread.sleep(3 * 1000);// ä¼‘çœ 3ç§’
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

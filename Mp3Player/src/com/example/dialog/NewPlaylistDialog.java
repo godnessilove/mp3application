@@ -39,7 +39,7 @@ public class NewPlaylistDialog extends DialogFragment {
 		// Pass null as the parent view because its going in the dialog layout
 		builder.setView(view)
 				// Add action buttons
-				.setPositiveButton("È·¶¨", new DialogInterface.OnClickListener() {
+				.setPositiveButton("ç¡®å®š", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						// sign in the user ...
@@ -50,7 +50,7 @@ public class NewPlaylistDialog extends DialogFragment {
 								.findViewById(R.id.adddialog);
 						text = edittext.getText().toString();
 						if (text.equals("")) {
-							Toast.makeText(getActivity(), "²¥·ÅÁĞ±í²»ÄÜÎª¿Õ",
+							Toast.makeText(getActivity(), "æ’­æ”¾åˆ—è¡¨ä¸èƒ½ä¸ºç©º",
 									Toast.LENGTH_SHORT).show();
 							closedialog(dialog,false);
 						} else if (!list.contains(text)) {
@@ -62,17 +62,17 @@ public class NewPlaylistDialog extends DialogFragment {
 							closedialog(dialog,true);
 						} else {
 							Toast.makeText(getActivity(),
-									edittext.getText() + "²¥·ÅÁĞ±íÒÑ´æÔÚ",
+									edittext.getText() + "æ’­æ”¾åˆ—è¡¨å·²å­˜åœ¨",
 									Toast.LENGTH_SHORT).show();
 							closedialog(dialog,false);
 						}
 						
 					}
 				})
-				.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å–æ¶ˆ", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						NewPlaylistDialog.this.getDialog().cancel();
-						System.out.println("µã»÷µÄÊÇÈ¡Ïû");
+						System.out.println("ç‚¹å‡»çš„æ˜¯å–æ¶ˆ");
 						mListener.onArticleSelected(1);
 						closedialog(dialog,true);
 					}
@@ -108,7 +108,7 @@ public class NewPlaylistDialog extends DialogFragment {
 		            .getSuperclass().getDeclaredField(
 		                     "mShowing" );
 		    field.setAccessible( true );
-		     //   ½«mShowing±äÁ¿ÉèÎªfalse£¬±íÊ¾¶Ô»°¿òÒÑ¹Ø±Õ ,¼´ÆÛÆ­Ô´Âë£¬×öµ½dialog²»¹Ø±Õ£¬·´Ö®½«»Ö¸´Õı³£
+		     //   å°†mShowingå˜é‡è®¾ä¸ºfalseï¼Œè¡¨ç¤ºå¯¹è¯æ¡†å·²å…³é—­ ,å³æ¬ºéª—æºç ï¼Œåšåˆ°dialogä¸å…³é—­ï¼Œåä¹‹å°†æ¢å¤æ­£å¸¸
 		    field.set(dialog, isclose );
 		    dialog.dismiss();
 		}

@@ -1,5 +1,6 @@
 package com.example.download;
 
+import android.annotation.SuppressLint;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+@SuppressLint("DefaultLocale")
 public class HttpDownLoad {
 	private FileUtil fileutil = new FileUtil();
 	private FileInputStream fis;
@@ -22,8 +24,8 @@ public class HttpDownLoad {
 		try {
 			URL url = new URL(strUrl);
 			HttpURLConnection huc = (HttpURLConnection) url.openConnection();
-			huc.setConnectTimeout(30000);// Á´½Ó³¬Ê±
-			huc.setReadTimeout(30000); // ´«ÊäÊı¾İ³¬Ê±
+			huc.setConnectTimeout(30000);// é“¾æ¥è¶…æ—¶
+			huc.setReadTimeout(30000); // ä¼ è¾“æ•°æ®è¶…æ—¶
 			buff = new BufferedReader(new InputStreamReader(
 					huc.getInputStream(), "UTF-8"));
 
@@ -31,21 +33,18 @@ public class HttpDownLoad {
 				sb.append(a);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
 				buff.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return sb.toString();
 	}
 
-	public int downFile(String urlstr, String path, String filenames)
-			throws IOException {
+	public int downFile(String urlstr, String path, String filenames) {
 		int result = 0;
 		InputStream input = null;
 		URL url = null;
@@ -53,47 +52,54 @@ public class HttpDownLoad {
 			result = 1;
 		} else {
 			try {
-				url = new URL(urlstr
-						+ URLEncoder.encode(filenames, "UTF-8"));
+				url = new URL(urlstr + URLEncoder.encode(filenames, "UTF-8"));
 				HttpURLConnection urlconnect = (HttpURLConnection) url
 						.openConnection();
-				urlconnect.setConnectTimeout(30000);// Á´½Ó³¬Ê±
-				urlconnect.setReadTimeout(30000); // ´«ÊäÊı¾İ³¬Ê±
+				urlconnect.setConnectTimeout(30000);// é“¾æ¥è¶…æ—¶
+				urlconnect.setReadTimeout(30000); // ä¼ è¾“æ•°æ®è¶…æ—¶
 				input = urlconnect.getInputStream();
-				// ÅĞ¶Ï¿Õ¼äÊÇ·ñ¹»
-				long feespace = fileutil.getSDFeeSpace();
+				// åˆ¤æ–­ç©ºé—´æ˜¯å¦å¤Ÿ
+				// long feespace = fileutil.getSDFeeSpace();
 				long availablespace = fileutil.getSDAvailableSpace();
-				long blockspace = fileutil.getSDBlockSpace();
+				// long blockspace = fileutil.getSDBlockSpace();
 				if (availablespace > urlconnect.getContentLength()) {
 					fileutil.writeDate(path, filenames, input);
-				} else
-					System.out.println("SD¿Õ¼ä²»¹»");
+				} else {
+					System.out.println("SDç©ºé—´ä¸å¤Ÿ,sdç©ºé—´å‰©ä½™ï¼š" + availablespace);
+					result = -1;
+				}
 			} catch (FileNotFoundException e) {
-				System.out.println("Ô¶³Ì " + filenames + "ÎÄ¼ş²»´æÔÚ");
+				System.out.println("è¿œç¨‹ " + filenames + "æ–‡ä»¶ä¸å­˜åœ¨");
+				result = -1;
 			} catch (Exception e) {
 				e.printStackTrace();
+				result = -1;
 			} finally {
 				if (input != null)
-					input.close();
+					try {
+						input.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 			}
 		}
 		return result;
 	}
 
 	/*
-	 * »ñÈ¡mp3nameµÄÏÂÔØ½ø¶È£¬·µ»Ø%Ç°Ãæ²¿·ÖµÄintÖµ
+	 * è·å–mp3nameçš„ä¸‹è½½è¿›åº¦ï¼Œè¿”å›%å‰é¢éƒ¨åˆ†çš„intå€¼
 	 */
 	public int downPercentage(String mp3name, String mp3size, String downmp3path) {
 		int result = 0;
 		Float fullsize = Float.parseFloat(mp3size.substring(0,
 				mp3size.length() - 2));
 		String downpath = fileutil.getSDPath() + downmp3path + "/" + mp3name
-				+ ".temp";// ÁÙÊ±ÎÄ¼ş
+				+ ".temp";// ä¸´æ—¶æ–‡ä»¶
 		System.out.println("downpath is " + downpath);
-		String newdownpath = fileutil.getSDPath() + downmp3path + "/" + mp3name;// ÏÂÔØÍê³ÉºóµÄÎÄ¼ş
+		String newdownpath = fileutil.getSDPath() + downmp3path + "/" + mp3name;// ä¸‹è½½å®Œæˆåçš„æ–‡ä»¶
 		File file = new File(downpath);
 		File newfile = new File(newdownpath);
-		// Èç¹ûtempÎÄ¼ş´æÔÚÔòËµÃ÷Ã»ÓĞÍê³ÉÏÂÔØ
+		// å¦‚æœtempæ–‡ä»¶å­˜åœ¨åˆ™è¯´æ˜æ²¡æœ‰å®Œæˆä¸‹è½½
 		if (file.exists()) {
 			try {
 				fis = new FileInputStream(file);
@@ -101,13 +107,11 @@ public class HttpDownLoad {
 						(double) (fis.available() / 1024 / 1024 / fullsize))) * 100);
 				System.out.println("downPercentage is " + result);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
 				try {
 					fis.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

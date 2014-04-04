@@ -3,7 +3,7 @@ package com.example.sqlite;
 public class PlayMp3ListTable {
 
 	// public static final String TABLENAME = "local_mp3_list_all";
-	// Ã¿ÕÅmp3²¥·ÅÁĞ±íµÄÁĞ¶¼Ò»Ñù
+	// æ¯å¼ mp3æ’­æ”¾åˆ—è¡¨çš„åˆ—éƒ½ä¸€æ ·
 	private static final String MP3NAME = "mp3name";
 	private static final String MP3SIZE = "mp3size";
 	private static final String MP3PATH = "mp3path";

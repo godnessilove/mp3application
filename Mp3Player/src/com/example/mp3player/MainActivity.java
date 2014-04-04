@@ -1,25 +1,24 @@
 package com.example.mp3player;
 
-
 import com.example.sqlite.DProvider;
 
 import android.annotation.SuppressLint;
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.view.Menu;
-import android.view.View;
 import android.widget.Spinner;
 
 import com.example.dialog.NewPlaylistDialog;
 
 @SuppressLint("NewApi")
-public class MainActivity extends FragmentActivity implements NewPlaylistDialog.DialogListener{
+public class MainActivity extends FragmentActivity implements
+		NewPlaylistDialog.DialogListener {
 	private static final int UPDATE = 1;
 	private static final int ABOUT = 2;
 	private FragmentTabHost tab;
+	private Handler handler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +26,12 @@ public class MainActivity extends FragmentActivity implements NewPlaylistDialog.
 		setContentView(R.layout.main);
 		tab = (FragmentTabHost) findViewById(android.R.id.tabhost);
 		tab.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
-		tab.addTab(tab.newTabSpec("tab222").setIndicator("±¾µØÁĞ±í"),
+		tab.addTab(tab.newTabSpec("tab222").setIndicator("æœ¬åœ°åˆ—è¡¨"),
 				LocalActivity.class, null);
-		tab.addTab(tab.newTabSpec("tab111").setIndicator("·şÎñÆ÷ÁĞ±í"),
+		tab.addTab(tab.newTabSpec("tab111").setIndicator("æœåŠ¡å™¨åˆ—è¡¨"),
 				RemoteActivity.class, null);
-		
-		
+
 	}
-	
-	
 
 	@Override
 	protected void onPause() {
@@ -43,30 +39,31 @@ public class MainActivity extends FragmentActivity implements NewPlaylistDialog.
 		System.out.println("MainActivity is onPause");
 	}
 
-
-
 	@Override
 	protected void onResume() {
-		//Ã¿´Î»Øµ½activityµÄ•rºòË¢ĞÂÏÖÓĞÈ«²¨MP3²¥·ÅÀà±í
+		// æ¯æ¬¡å›åˆ°activityçš„æ™‚å€™åˆ·æ–°ç°æœ‰å…¨æ³¢MP3æ’­æ”¾ç±»è¡¨
 		super.onResume();
 		System.out.println("MainActivity is onResume");
-		Thread thread = new Thread(createlocaltable);
-		thread.start();
+		/*
+		 * Thread thread = new Thread(createlocaltable); thread.start();
+		 */
+		if (handler == null) {
+			handler = new Handler();
+		}
+		handler.post(createlocaltable);
 	}
-
-
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		String fag = tab.getCurrentTabTag();
 		if (fag.equals("tab111")) {
 			menu.clear();
-			menu.add(0, UPDATE, 0, "¸üĞÂÁĞ±í");
-			menu.add(0, ABOUT, 0, "¹ØÓÚ");
+			menu.add(0, UPDATE, 0, "æ›´æ–°åˆ—è¡¨");
+			menu.add(0, ABOUT, 0, "å…³äº");
 		} else if (fag.equals("tab222")) {
 			menu.clear();
-			menu.add(0, UPDATE, 0, "¸üĞÂ²¥·ÅÁĞ±í");
-			menu.add(0, ABOUT, 0, "„h³ıÄ¿Ç°µÄ²¥·ÅÁĞ±í");
+			menu.add(0, UPDATE, 0, "æ›´æ–°æ’­æ”¾åˆ—è¡¨");
+			menu.add(0, ABOUT, 0, "åˆªé™¤ç›®å‰çš„æ’­æ”¾åˆ—è¡¨");
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -75,16 +72,20 @@ public class MainActivity extends FragmentActivity implements NewPlaylistDialog.
 
 		@Override
 		public void run() {
-			DProvider dprovider = DProvider.getInstance(getApplicationContext());//new DProvider(getApplicationContext());
+			DProvider dprovider = DProvider
+					.getInstance(getApplicationContext());// new
+															// DProvider(getApplicationContext());
 			dprovider.initAllList();
 		}
 	};
 
 	@Override
 	public void onArticleSelected(int position) {
-		System.out.println("mainactivityÏìÓ¦dialogfragment " + position);
-		LocalActivity fm = (LocalActivity) getSupportFragmentManager().findFragmentByTag("tab222");
-		Spinner spinner = (Spinner) fm.getActivity().findViewById(R.id.spinner1);
+		System.out.println("mainactivityå“åº”dialogfragment " + position);
+		LocalActivity fm = (LocalActivity) getSupportFragmentManager()
+				.findFragmentByTag("tab222");
+		Spinner spinner = (Spinner) fm.getActivity()
+				.findViewById(R.id.spinner1);
 		spinner.setSelection(0);
 	}
 

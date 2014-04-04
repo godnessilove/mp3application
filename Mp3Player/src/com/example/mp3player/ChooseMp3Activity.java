@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
-
 @SuppressLint("CommitPrefEdits")
 public class ChooseMp3Activity extends ListActivity {
 	private String listname;
@@ -51,13 +50,16 @@ public class ChooseMp3Activity extends ListActivity {
 
 		button1.setOnClickListener(new button1chick());
 		button2.setOnClickListener(new button2chick());
-		handler = new Handler();
+
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
 	protected void onResume() {
 		System.out.println("choose activity onResume");
+		if (handler == null) {
+			handler = new Handler();
+		}
 		handler.post(createlocaltable);
 		super.onResume();
 	}
@@ -66,7 +68,8 @@ public class ChooseMp3Activity extends ListActivity {
 
 		@Override
 		public void run() {
-			dprovider = DProvider.getInstance(getApplicationContext());//new DProvider(getApplicationContext());
+			dprovider = DProvider.getInstance(getApplicationContext());// new
+																		// DProvider(getApplicationContext());
 			dprovider.initAllList();
 			String table_name = DateBaseHelper.getTablelocalname();
 			cursor = dprovider.querydate(table_name);
@@ -82,9 +85,9 @@ public class ChooseMp3Activity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		// È¡µ±Ç°¿ÉÊÓµÄµÚÒ»¸öitemµÄÕæÊµposition
+		// å–å½“å‰å¯è§†çš„ç¬¬ä¸€ä¸ªitemçš„çœŸå®position
 		int j = l.getFirstVisiblePosition();
-		// È¡µÃµã»÷µÄÕæÊµitem
+		// å–å¾—ç‚¹å‡»çš„çœŸå®item
 		position = position - j;
 		View view = l.getChildAt(position);
 		CheckBox checkbox = (CheckBox) view
@@ -96,11 +99,11 @@ public class ChooseMp3Activity extends ListActivity {
 		}
 		int count = listadapter.getCount();
 		int chickcount = listadapter.count();
-		button1.setText("Ìí¼Ó(" + chickcount + ")");
+		button1.setText("æ·»åŠ (" + chickcount + ")");
 		if (chickcount == count) {
-			button2.setText("·´Ñ¡");
+			button2.setText("åé€‰");
 		} else if (chickcount != count) {
-			button2.setText("È«Ñ¡");
+			button2.setText("å…¨é€‰");
 		}
 	}
 
@@ -110,12 +113,12 @@ public class ChooseMp3Activity extends ListActivity {
 		public void onClick(View v) {
 			int count = listadapter.getCount();
 
-			if (button2.getText().equals("È«Ñ¡")) {
-				button1.setText("Ìí¼Ó(" + count + ")");
-				button2.setText("·´Ñ¡");
-			} else if (button2.getText().equals("·´Ñ¡")) {
-				button1.setText("Ìí¼Ó(0)");
-				button2.setText("È«Ñ¡");
+			if (button2.getText().equals("å…¨é€‰")) {
+				button1.setText("æ·»åŠ (" + count + ")");
+				button2.setText("åé€‰");
+			} else if (button2.getText().equals("åé€‰")) {
+				button1.setText("æ·»åŠ (0)");
+				button2.setText("å…¨é€‰");
 			}
 
 			HashMap<Integer, Boolean> list = listadapter.getIsSelected();
@@ -124,9 +127,9 @@ public class ChooseMp3Activity extends ListActivity {
 				Map.Entry<Integer, Boolean> entry = (Map.Entry<Integer, Boolean>) iter
 						.next();
 				Integer key = (Integer) entry.getKey();
-				if (button2.getText().equals("È«Ñ¡")) {
+				if (button2.getText().equals("å…¨é€‰")) {
 					list.put(key, false);
-				} else if (button2.getText().equals("·´Ñ¡")) {
+				} else if (button2.getText().equals("åé€‰")) {
 					list.put(key, true);
 				}
 			}
@@ -161,13 +164,23 @@ public class ChooseMp3Activity extends ListActivity {
 		}
 	}
 
+	
 	@Override
-	protected void onDestroy() {
-		System.out.println("choose activity onDestroy");
+	protected void onStop() {
+		super.onStop();
+		System.out.println("choose activity onStop");
 		if (!cursor.isClosed()) {
 			cursor.close();
-			System.out.println("choose cursor ¹Ø±Õ");
+			System.out.println("choose cursor å…³é—­");
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
 		super.onDestroy();
+		if (!cursor.isClosed()) {
+			cursor.close();
+			System.out.println("choose cursor å…³é—­");
+		}
 	}
 }

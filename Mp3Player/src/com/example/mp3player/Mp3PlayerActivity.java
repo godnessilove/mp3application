@@ -50,15 +50,15 @@ public class Mp3PlayerActivity extends Activity {
 	
 	private String mp3listname;
 	private Receiver receiver ;
-	//ÓÃÀ´ÅĞ¶Ï¹ã²¥ÊÇ·ñÒÑ¾­×¢²á
+	//ç”¨æ¥åˆ¤æ–­å¹¿æ’­æ˜¯å¦å·²ç»æ³¨å†Œ
 	private Boolean ISREGISTER = false;
-	//ÉèÖÃ½ÓÊÕ¹ã²¥µÄÌõ¼ş
+	//è®¾ç½®æ¥æ”¶å¹¿æ’­çš„æ¡ä»¶
 	public static final String UPDATE_ACTION = "chris.mp3.action.UPDATE_ACTION";
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		System.out.println("activity ´´½¨");
+		System.out.println("activity åˆ›å»º");
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mp3player);
@@ -108,20 +108,20 @@ public class Mp3PlayerActivity extends Activity {
 
 	@Override
 	protected void onStart() {
-		System.out.println("activity ¿ªÊ¼");
+		System.out.println("activity å¼€å§‹");
 		AutoPlay();
 		super.onStart();
 	}
 
 	@Override
 	protected void onRestart() {
-		System.out.println("activity ÖØĞÂ¿ªÊ¼");
+		System.out.println("activity é‡æ–°å¼€å§‹");
 		super.onRestart();
 	}
 
 	@Override
 	protected void onResume() {
-		System.out.println("activity »Ö¸´");
+		System.out.println("activity æ¢å¤");
 		//bindservice
 		if (mp3serivce == null) {
 			Intent intent1 = new Intent();
@@ -129,7 +129,7 @@ public class Mp3PlayerActivity extends Activity {
 			bindService(intent1, conn, BIND_AUTO_CREATE);
 		}
 		
-		//×¢²á¹ã²¥
+		//æ³¨å†Œå¹¿æ’­
 		receiver = new Receiver();
 		IntentFilter filter = new IntentFilter(Mp3PlayerActivity.UPDATE_ACTION);
 		Mp3PlayerActivity.this.registerReceiver(receiver, filter);
@@ -143,19 +143,19 @@ public class Mp3PlayerActivity extends Activity {
 
 	@Override
 	protected void onPause() {
-		System.out.println("activity ÔİÍ£");
-		handler.removeCallbacksAndMessages(null);// µãÆäËû¸èÇú²¥·ÅµÄÊ±ºò£¬É¾µôÇ°Ò»¸ö¸è´ÊµÄÏß³Ì
+		System.out.println("activity æš‚åœ");
+		handler.removeCallbacksAndMessages(null);// ç‚¹å…¶ä»–æ­Œæ›²æ’­æ”¾çš„æ—¶å€™ï¼Œåˆ æ‰å‰ä¸€ä¸ªæ­Œè¯çš„çº¿ç¨‹
 		super.onPause();
 	}
 
 	@Override
 	protected void onStop() {
-		System.out.println("activity Í£Ö¹");
+		System.out.println("activity åœæ­¢");
 		if(ISREGISTER){
 		unregisterReceiver(receiver);
 		ISREGISTER = false;
 		}
-		handler.removeCallbacksAndMessages(null);// µãÆäËû¸èÇú²¥·ÅµÄÊ±ºò£¬É¾µôÇ°Ò»¸ö¸è´ÊµÄÏß³Ì
+		handler.removeCallbacksAndMessages(null);// ç‚¹å…¶ä»–æ­Œæ›²æ’­æ”¾çš„æ—¶å€™ï¼Œåˆ æ‰å‰ä¸€ä¸ªæ­Œè¯çš„çº¿ç¨‹
 		super.onStop();
 	}
 
@@ -169,14 +169,14 @@ public class Mp3PlayerActivity extends Activity {
 		ispause = false;
 		isstop = false;
 		startService(intent);
-		handler.post(update);// ¸ü»»¿ªÊ¼ÔİÍ£image
+		handler.post(update);// æ›´æ¢å¼€å§‹æš‚åœimage
 	}
 
 	class Mp3Start implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			// µãÆäËû¸èÇú²¥·ÅµÄÊ±ºò£¬É¾µôÇ°Ò»¸ö¸è´ÊµÄÏß³Ì
+			// ç‚¹å…¶ä»–æ­Œæ›²æ’­æ”¾çš„æ—¶å€™ï¼Œåˆ æ‰å‰ä¸€ä¸ªæ­Œè¯çš„çº¿ç¨‹
 			handler.removeCallbacks(r);
 			if (!ispause) {
 				Intent intent = new Intent();
@@ -185,7 +185,7 @@ public class Mp3PlayerActivity extends Activity {
 				intent.putExtra("mp3name", mp3name);
 				startService(intent);
 				ispause = true;
-				handler.post(update);// ¸ü»»¿ªÊ¼ÔİÍ£image
+				handler.post(update);// æ›´æ¢å¼€å§‹æš‚åœimage
 			} else {
 				Intent intent = new Intent();
 				intent.setClass(Mp3PlayerActivity.this, Mp3PlayService.class);
@@ -195,7 +195,7 @@ public class Mp3PlayerActivity extends Activity {
 				ispause = false;
 				isstop = false;
 				startService(intent);
-				handler.post(update);// ¸ü»»¿ªÊ¼ÔİÍ£image
+				handler.post(update);// æ›´æ¢å¼€å§‹æš‚åœimage
 
 			}
 			handler.post(r);
@@ -218,9 +218,9 @@ public class Mp3PlayerActivity extends Activity {
 			LrcProcess lrcprocess = new LrcProcess();
 			lrcs = lrcprocess.process(lrcpath);
 			longtime = LrcProcess.GetAllTime(lrcs);
-			//¸üĞÂ²¥·Åmp3Ãû³Æ
+			//æ›´æ–°æ’­æ”¾mp3åç§°
 			handler.post(updatemp3name);
-			//ÖØĞÂ¼ÓÔØ¸è´Ê
+			//é‡æ–°åŠ è½½æ­Œè¯
 			handler.removeCallbacks(r);
 			handler.post(r);
 		}
@@ -239,9 +239,9 @@ public class Mp3PlayerActivity extends Activity {
 			startService(intent);
 			ispause = false;
 			isstop = true;
-			handler.post(update);// ¸ü»»¿ªÊ¼ÔİÍ£image
+			handler.post(update);// æ›´æ¢å¼€å§‹æš‚åœimage
 			finish();
-			System.out.println("activityÍË³ö");
+			System.out.println("activityé€€å‡º");
 		}
 
 	}
@@ -280,7 +280,7 @@ public class Mp3PlayerActivity extends Activity {
 				System.out.println("playtime is " + playtime);
 				if (!ispause && !isstop)
 					kan(playtime);
-			}else textview.setText("Î´ÕÒµ½¸è´Ê");
+			}else textview.setText("æœªæ‰¾åˆ°æ­Œè¯");
 		}
 	};
 
@@ -289,14 +289,14 @@ public class Mp3PlayerActivity extends Activity {
 			if (playtime >= longtime[longtime.length - 1]) {
 				lrc = lrcs.get(longtime[longtime.length - 1]);
 				textview.setText(lrc);
-				System.out.println("¿ªÊ¼¸ü»»¸è´Ê ,¸è´ÊÊ±¼ä"
+				System.out.println("å¼€å§‹æ›´æ¢æ­Œè¯ ,æ­Œè¯æ—¶é—´"
 						+ longtime[longtime.length - 1] + "playtime is "
 						+ playtime + " lrc :" + lrc);
 				break;
 			} else if (longtime[i] <= playtime && playtime < longtime[i + 1]) {
 				lrc = lrcs.get(longtime[i]);
 				textview.setText(lrc);
-				System.out.println("¿ªÊ¼¸ü»»¸è´Ê  ,¸è´ÊÊ±¼ä"
+				System.out.println("å¼€å§‹æ›´æ¢æ­Œè¯  ,æ­Œè¯æ—¶é—´"
 						+ longtime[longtime.length - 1] + "playtime is "
 						+ playtime + " lrc :" + lrc);
 				handler.postDelayed(r, longtime[i + 1] - playtime);
@@ -315,9 +315,9 @@ public class Mp3PlayerActivity extends Activity {
 			LrcProcess lrcprocess = new LrcProcess();
 			lrcs = lrcprocess.process(lrcpath);
 			longtime = LrcProcess.GetAllTime(lrcs);
-			//¸üĞÂ²¥·Åmp3Ãû³Æ
+			//æ›´æ–°æ’­æ”¾mp3åç§°
 			handler.post(updatemp3name);
-			//ÖØĞÂ¼ÓÔØ¸è´Ê
+			//é‡æ–°åŠ è½½æ­Œè¯
 			handler.removeCallbacks(r);
 			handler.post(r);
 		}
@@ -330,7 +330,7 @@ public class Mp3PlayerActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		System.out.println("activity ±»Ïú»Ù");
+		System.out.println("activity è¢«é”€æ¯");
 		unbindService(conn);
 		if(ISREGISTER){
 		unregisterReceiver(receiver);

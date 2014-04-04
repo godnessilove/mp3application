@@ -21,6 +21,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import com.example.dialog.NewPlaylistDialog;
+import com.example.download.FileUtil;
 import com.example.sqlite.DProvider;
 import com.example.sqlite.DateBaseHelper;
 import com.example.sqlite.PlayMp3ListTable;
@@ -37,6 +38,7 @@ public class LocalActivity extends ListFragment {
 	private Cursor cursor;
 	public final static int SPINNER_STATE = 0;
 	private SharedPreferences mPrefs;
+	FileUtil fileutil = new FileUtil();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class LocalActivity extends ListFragment {
 
 	@Override
 	public void onResume() {
+		System.out.println("SDå¡ç›®å½• ï¼š" + fileutil.getSDPath());
 		System.out.println("LocalActivity is onResume");
 		super.onResume();
 		mPrefs = getActivity().getPreferences(SPINNER_STATE);
@@ -56,14 +59,15 @@ public class LocalActivity extends ListFragment {
 		arrayadapter1 = new ArrayAdapter<String>(getActivity(), R.layout.item,
 				R.id.textViewId, list);
 		spinner.setAdapter(arrayadapter1);
-		// spinner.setPrompt("¸èÇúÀàĞÍ"); ÏÔÊ¾µÄÊ±ºòÈÃÄ¬ÈÏÏÔÊ¾¸èÇúÀàĞÍ
+		// spinner.setPrompt("æ­Œæ›²ç±»å‹"); æ˜¾ç¤ºçš„æ—¶å€™è®©é»˜è®¤æ˜¾ç¤ºæ­Œæ›²ç±»å‹
 		spinner.setOnItemSelectedListener(new spinnerOnchick());
-		handler = new Handler();
-
-		String selection1 = mPrefs.getString("spinner_value", "È«²¿¸èÇú");
+		if (handler == null) {
+			handler = new Handler();
+		}
+		String selection1 = mPrefs.getString("spinner_value", "å…¨éƒ¨æ­Œæ›²");
 		System.out.println("selection1 is " + selection1);
-		// Èç¹û±£´æµÄ²¥·ÅÁĞ±íÃ»ÓĞ±»±»É¾³ı
-		if (list.contains(selection1) && !selection1.equals("ĞÂÔö²¥·ÅÁĞ±í")) {
+		// å¦‚æœä¿å­˜çš„æ’­æ”¾åˆ—è¡¨æ²¡æœ‰è¢«è¢«åˆ é™¤
+		if (list.contains(selection1) && !selection1.equals("æ–°å¢æ’­æ”¾åˆ—è¡¨")) {
 			int position = arrayadapter1.getPosition(selection1);
 			spinner.setSelection(position, true);
 		} else {
@@ -81,10 +85,10 @@ public class LocalActivity extends ListFragment {
 
 		@Override
 		public void run() {
-			// Ë¢ĞÂÏÖÓĞÈ«²¿MP3²¥·ÅÁĞ±í
+			// åˆ·æ–°ç°æœ‰å…¨éƒ¨MP3æ’­æ”¾åˆ—è¡¨
 			DProvider dprovider = DProvider.getInstance(getActivity());
 			dprovider.initAllList();
-			if (selection.equals("È«²¿¸èÇú")) {
+			if (selection.equals("å…¨éƒ¨æ­Œæ›²")) {
 				table_name = DateBaseHelper.getTablelocalname();
 				cursor = dprovider.querydate(table_name);
 			} else {
@@ -95,7 +99,8 @@ public class LocalActivity extends ListFragment {
 					PlayMp3ListTable.getMp3size() };
 			int[] to = new int[] { R.id.mp3name, R.id.mp3size };
 			SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-					getActivity(), R.layout.mp3info_item, cursor, from, to, 0);
+					getActivity(), R.layout.mp3info_item, cursor, from, to,
+					SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 			setListAdapter(adapter);
 		}
 
@@ -120,7 +125,7 @@ public class LocalActivity extends ListFragment {
 		intent.putExtra("lrcpath", lrcpath);
 		intent.putExtra("mp3listname", selection);
 		intent.setClass(getActivity(), Mp3PlayerActivity.class);
-		// 0±íÊ¾²¥·Å½çÃæ»ØÀ´
+		// 0è¡¨ç¤ºæ’­æ”¾ç•Œé¢å›æ¥
 		startActivityForResult(intent, 0);
 	}
 
@@ -130,7 +135,7 @@ public class LocalActivity extends ListFragment {
 		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
 			selection = arg0.getItemAtPosition(arg2).toString();
-			if (selection.equals("ĞÂÔö²¥·ÅÁĞ±í")) {
+			if (selection.equals("æ–°å¢æ’­æ”¾åˆ—è¡¨")) {
 				NewPlaylistDialog newdialog = new NewPlaylistDialog();
 				newdialog.show(getFragmentManager(), "NewPlayList");
 			} else {
@@ -140,7 +145,7 @@ public class LocalActivity extends ListFragment {
 
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
-			System.out.println("spinner ÎŞÑ¡Ôñ");
+			System.out.println("spinner æ— é€‰æ‹©");
 		}
 
 	}
@@ -148,13 +153,14 @@ public class LocalActivity extends ListFragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		String listname = spinner.getSelectedItem().toString();
-		// µ±Ñ¡ÔñÉ¾³ıµ±Ç°²¥·ÅÁĞ±íµÄÊ±ºò£¬É¾³ıÊı¾İ¿âÖĞµÄ¶ÔÓ¦Öµ£¬Ë¢ĞÂ¸Ãactivity
+		// å½“é€‰æ‹©åˆ é™¤å½“å‰æ’­æ”¾åˆ—è¡¨çš„æ—¶å€™ï¼Œåˆ é™¤æ•°æ®åº“ä¸­çš„å¯¹åº”å€¼ï¼Œåˆ·æ–°è¯¥activity
 		switch (item.getItemId()) {
 		case 2:
 			DProvider dprovider = DProvider.getInstance(getActivity());
 			dprovider.deleteDate(listname);
-			// LocalActivity.this.onResume();
-			spinner.setSelection(0);
+			//arrayadapter1.notifyDataSetChanged();
+			//spinner.setSelection(0);
+			LocalActivity.this.onResume();
 			break;
 		case 1:
 			System.out.println("item is " + item.getItemId());
@@ -173,23 +179,23 @@ public class LocalActivity extends ListFragment {
 		System.out.println("LocalActivity onPause");
 		super.onPause();
 		SharedPreferences.Editor ed = mPrefs.edit();
-		if (!selection.equals("ĞÂ½¨²¥·ÅÁĞ±í")) {
+		if (!selection.equals("æ–°å»ºæ’­æ”¾åˆ—è¡¨")) {
 			ed.putString("spinner_value", selection);
 			System.out.println("put " + selection);
 		} else {
-			ed.putString("spinner_value", "È«²¿¸èÇú");
-			System.out.println("put È«²¿¸èÇú");
+			ed.putString("spinner_value", "å…¨éƒ¨æ­Œæ›²");
+			System.out.println("put å…¨éƒ¨æ­Œæ›²");
 		}
 		ed.commit();
 	}
 
 	@Override
 	public void onDestroy() {
+		super.onDestroy();
 		if (!cursor.isClosed()) {
 			cursor.close();
-			System.out.println("localactivity cursor ¹Ø±Õ");
+			System.out.println("localactivity cursor å…³é—­");
 		}
-		super.onDestroy();
 	}
 
 }

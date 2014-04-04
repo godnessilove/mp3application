@@ -32,7 +32,7 @@ public class Mp3PlayService extends Service implements
 	private NotificationManager manager = null;
 	private Builder builder = null;
 	private int threadid;
-	private int audiofocus = AudioManager.AUDIOFOCUS_REQUEST_FAILED;// Ä¬ÈÏ¸Õ¿ªÊ¼µÄÊ±ºòÊÇÃ»ÓĞ»ñµÃ½¹µãµÄ
+	private int audiofocus = AudioManager.AUDIOFOCUS_REQUEST_FAILED;// é»˜è®¤åˆšå¼€å§‹çš„æ—¶å€™æ˜¯æ²¡æœ‰è·å¾—ç„¦ç‚¹çš„
 	private Boolean ispause = false;
 	private String mp3path = null;
 	private AudioManager audiomanager = null;
@@ -69,7 +69,7 @@ public class Mp3PlayService extends Service implements
 
 	@Override
 	public void onCreate() {
-		System.out.println("´´½¨mp3service");
+		System.out.println("åˆ›å»ºmp3service");
 		super.onCreate();
 	}
 
@@ -82,7 +82,7 @@ public class Mp3PlayService extends Service implements
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		msg = intent.getStringExtra("msg");
 		if (msg.equals("START")) {
-			// Èç¹û›]ÓĞ²¥·ÅÆ÷
+			// å¦‚æœæ²’æœ‰æ’­æ”¾å™¨
 			if (m == null) {
 				mp3path = intent.getStringExtra("mp3path");
 				mp3name = intent.getStringExtra("mp3name");
@@ -91,7 +91,7 @@ public class Mp3PlayService extends Service implements
 				initMp3Notifi();
 				getAudioFocus();
 			} 
-			//ÇĞ»»¸èÇúµÄÊ±ºò
+			//åˆ‡æ¢æ­Œæ›²çš„æ—¶å€™
 			else if (mp3name.equals(intent.getStringExtra("mp3name")) == false) {
 				mp3path = intent.getStringExtra("mp3path");
 				mp3name = intent.getStringExtra("mp3name");
@@ -100,7 +100,7 @@ public class Mp3PlayService extends Service implements
 				initMp3Notifi();
 				mp3start();
 			}
-			//¸èÇúÃ»±äµÄÊ±ºò
+			//æ­Œæ›²æ²¡å˜çš„æ—¶å€™
 			else
 				mp3start();
 		} else if (msg.equals("PAUSE")) {
@@ -111,7 +111,7 @@ public class Mp3PlayService extends Service implements
 		return super.onStartCommand(intent, flags, startId);
 	}
 
-	// »ñÈ¡µ±Ç°audio½¹µã£¬³É¹¦ÁË²ÅÄÜ²¥·Å
+	// è·å–å½“å‰audioç„¦ç‚¹ï¼ŒæˆåŠŸäº†æ‰èƒ½æ’­æ”¾
 	public void getAudioFocus() {
 		if (audiomanager == null) {
 			getApplicationContext();
@@ -122,19 +122,19 @@ public class Mp3PlayService extends Service implements
 		}
 		if (audiofocus == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 			mp3start();
-			System.out.println("»ñµÃaudio½¹µã");
+			System.out.println("è·å¾—audioç„¦ç‚¹");
 		} else
-			System.out.println("Î´»ñµÃaudio½¹µã");
+			System.out.println("æœªè·å¾—audioç„¦ç‚¹");
 	}
 
-	// ³õÊ¼»¯²¥·ÅÆ÷
+	// åˆå§‹åŒ–æ’­æ”¾å™¨
 	public void initMediaPlayer() {
-		// Èç¹û²»´æÔÚ²¥·ÅÆ÷ÔòĞÂ½¨Ò»¸ö,·ñÔò¾ÍÖØÖÃ
+		// å¦‚æœä¸å­˜åœ¨æ’­æ”¾å™¨åˆ™æ–°å»ºä¸€ä¸ª,å¦åˆ™å°±é‡ç½®
 		if (m == null) {
 			m = new MediaPlayer();
 			threadid = Thread.currentThread().hashCode();
 		} else {
-			m.reset();// µã»÷ÏÂÒ»Ê×£¬ÖØÖÃÊÍ·Å×ÊÔ´£¬¼ÓÔØÏÂÒ»Ê×¸è
+			m.reset();// ç‚¹å‡»ä¸‹ä¸€é¦–ï¼Œé‡ç½®é‡Šæ”¾èµ„æºï¼ŒåŠ è½½ä¸‹ä¸€é¦–æ­Œ
 		}
 		try {
 			m.setDataSource(mp3path);
@@ -152,13 +152,13 @@ public class Mp3PlayService extends Service implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// ²»Ñ­»·
+		// ä¸å¾ªç¯
 		m.setLooping(false);
-		// ÉèÖÃÊÖ»úĞİÃßÊ±£¬²¥·ÅÆ÷ÈÔ¿ÉÕı³£²¥·Å,µ«ÊÇÔİÍ£ºÍÍ£Ö¹ºó»¹ÊÇÓĞ¿ÉÄÜ»á±»¹Ø±Õ
+		// è®¾ç½®æ‰‹æœºä¼‘çœ æ—¶ï¼Œæ’­æ”¾å™¨ä»å¯æ­£å¸¸æ’­æ”¾,ä½†æ˜¯æš‚åœå’Œåœæ­¢åè¿˜æ˜¯æœ‰å¯èƒ½ä¼šè¢«å…³é—­
 		m.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-		// ÉèÖÃ´íÎó¼àÌı
+		// è®¾ç½®é”™è¯¯ç›‘å¬
 		m.setOnErrorListener(this);
-		//ÉèÖÃ²¥·ÅÍêÒ»Ê×ºó×Ô¶¯²¥·ÅÏÂÒ»Ê×
+		//è®¾ç½®æ’­æ”¾å®Œä¸€é¦–åè‡ªåŠ¨æ’­æ”¾ä¸‹ä¸€é¦–
 		m.setOnCompletionListener(completion);
 	}
 
@@ -169,7 +169,7 @@ public class Mp3PlayService extends Service implements
 	public void mp3pause() {
 		if (m != null && m.isPlaying()) {
 			m.pause();
-			System.out.println("½øÈëÔİÍ£×´Ì¬");
+			System.out.println("è¿›å…¥æš‚åœçŠ¶æ€");
 		}
 	}
 
@@ -177,15 +177,15 @@ public class Mp3PlayService extends Service implements
 		if (m != null) {
 			m.stop();
 			m.release();
-			System.out.println("Í£Ö¹¡¢ÊÍ·Å×ÊÔ´");
+			System.out.println("åœæ­¢ã€é‡Šæ”¾èµ„æº");
 			m = null;
 		}
-		// ³·ÏúÍ¨Öª×´Ì¬
+		// æ’¤é”€é€šçŸ¥çŠ¶æ€
 		stopForeground(true);
-		// ·ÅÆúÒôÆµ½¹µã
+		// æ”¾å¼ƒéŸ³é¢‘ç„¦ç‚¹
 		audiomanager.abandonAudioFocus(listener);
 		Mp3PlayService.this.stopSelf();
-		System.out.println("Mp3PlayService ÒÑÉ±");
+		System.out.println("Mp3PlayService å·²æ€");
 	}
 
 	@Override
@@ -193,12 +193,12 @@ public class Mp3PlayService extends Service implements
 		if (m != null) {
 			m.stop();
 			m.release();
-			System.out.println("Í£Ö¹¡¢ÊÍ·Å×ÊÔ´");
+			System.out.println("åœæ­¢ã€é‡Šæ”¾èµ„æº");
 			m = null;
 		}
-		// ·ÅÆúÒôÆµ½¹µã
+		// æ”¾å¼ƒéŸ³é¢‘ç„¦ç‚¹
 		audiomanager.abandonAudioFocus(listener);
-		// ³·ÏúÍ¨Öª×´Ì¬
+		// æ’¤é”€é€šçŸ¥çŠ¶æ€
 		stopForeground(true);
 		super.onDestroy();
 	}
@@ -210,13 +210,13 @@ public class Mp3PlayService extends Service implements
 				+ "]";
 	}
 
-	// µ±²¥·ÅÆ÷³ö´íµÄÊ±ºò,ĞèÒªÖØÖÃ£¬ÕâÀïresetºó»á×Ô¶¯ÊÍ·Å×ÊÔ´£¬²»ÓÃÊÖ¶¯µ÷ÓÃrelease
+	// å½“æ’­æ”¾å™¨å‡ºé”™çš„æ—¶å€™,éœ€è¦é‡ç½®ï¼Œè¿™é‡Œresetåä¼šè‡ªåŠ¨é‡Šæ”¾èµ„æºï¼Œä¸ç”¨æ‰‹åŠ¨è°ƒç”¨release
 	@Override
 	public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
 		m.reset();
 		m = null;
 		stopForeground(true);
-		// ·ÅÆúÒôÆµ½¹µã
+		// æ”¾å¼ƒéŸ³é¢‘ç„¦ç‚¹
 		audiomanager.abandonAudioFocus(listener);
 		return true;
 	}
@@ -231,7 +231,7 @@ public class Mp3PlayService extends Service implements
 			intent.putExtra("mp3name", mp3name);
 			intent.putExtra("mp3path", mp3path);
 			intent.putExtra("mp3listname", mp3listname);
-			//ĞÂ½¨¸öÕ» °Ñblack stack·ÅÈëÕâ¸öÕ»Àï£¬ÎªÁËÈÃÍ¨Öª´ò¿ªµÄactivity°´·µ»Ø¼ü¿ÉÒÔ»Øµ½²¥·ÅÀà±í£¬ÕâÀï±ØĞëÒªÔÚmainfastÀïÅäÖÃÓëactivityÇ×½üµÄactivity
+			//æ–°å»ºä¸ªæ ˆ æŠŠblack stackæ”¾å…¥è¿™ä¸ªæ ˆé‡Œï¼Œä¸ºäº†è®©é€šçŸ¥æ‰“å¼€çš„activityæŒ‰è¿”å›é”®å¯ä»¥å›åˆ°æ’­æ”¾ç±»è¡¨ï¼Œè¿™é‡Œå¿…é¡»è¦åœ¨mainfasté‡Œé…ç½®ä¸activityäº²è¿‘çš„activity
 			TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 			stackBuilder.addParentStack(Mp3PlayerActivity.class);
 			stackBuilder.addNextIntent(intent);
@@ -249,7 +249,7 @@ public class Mp3PlayService extends Service implements
 			builder.setOngoing(true);
 		}
 		builder.setContentTitle(mp3name);
-		builder.setContentText("ÕıÔÚ²¥·Å");
+		builder.setContentText("æ­£åœ¨æ’­æ”¾");
 		startForeground(threadid, builder.build());
 	}
 	
@@ -264,7 +264,7 @@ public class Mp3PlayService extends Service implements
 			initMediaPlayer();
 			initMp3Notifi();
 			mp3start();
-			//Í¨ÖªMp3PlayerActivity½øĞĞ¸èÇúĞÅÏ¢¸üĞÂ
+			//é€šçŸ¥Mp3PlayerActivityè¿›è¡Œæ­Œæ›²ä¿¡æ¯æ›´æ–°
 			Intent intent = new Intent(Mp3PlayerActivity.UPDATE_ACTION);
 			intent.putExtra("mp3name", mp3name);
 			intent.putExtra("mp3path", mp3path);
@@ -278,7 +278,7 @@ public class Mp3PlayService extends Service implements
 			switch (focusChange) {
 			case AudioManager.AUDIOFOCUS_GAIN:
 				// resume playback
-				System.out.println("focusChange , »ñµÃ½¹µã");
+				System.out.println("focusChange , è·å¾—ç„¦ç‚¹");
 				if (m == null)
 					initMediaPlayer();
 				else if (!m.isPlaying())
@@ -290,7 +290,7 @@ public class Mp3PlayService extends Service implements
 			case AudioManager.AUDIOFOCUS_LOSS:
 				// Lost focus for an unbounded amount of time: stop playback and
 				// release media player
-				System.out.println("focusChange , Ê§È¥½¹µã");
+				System.out.println("focusChange , å¤±å»ç„¦ç‚¹");
 				if (m.isPlaying())
 					mp3stop();
 				break;
@@ -299,7 +299,7 @@ public class Mp3PlayService extends Service implements
 				// Lost focus for a short time, but we have to stop
 				// playback. We don't release the media player because playback
 				// is likely to resume
-				System.out.println("focusChange , ¶ÌÔİÊ§È¥");
+				System.out.println("focusChange , çŸ­æš‚å¤±å»");
 				if (m.isPlaying())
 					mp3pause();
 				break;
@@ -307,7 +307,7 @@ public class Mp3PlayService extends Service implements
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
 				// Lost focus for a short time, but it's ok to keep playing
 				// at an attenuated level
-				System.out.println("focusChange , ±£³Ö²¥·Å£¬½µµÍÉùÒô");
+				System.out.println("focusChange , ä¿æŒæ’­æ”¾ï¼Œé™ä½å£°éŸ³");
 				if (m.isPlaying())
 					m.setVolume(0.1f, 0.1f);
 				break;

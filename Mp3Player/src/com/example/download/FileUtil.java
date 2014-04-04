@@ -21,7 +21,7 @@ public class FileUtil {
 				Environment.MEDIA_MOUNTED)) {
 			SDPath = Environment.getExternalStorageDirectory() + "/";
 		} else
-			System.out.println("Ã»ÓĞ´æ´¢¿¨");
+			System.out.println("æ²¡æœ‰å­˜å‚¨å¡");
 	}
 
 	public String getSDPath() {
@@ -30,19 +30,19 @@ public class FileUtil {
 
 	public long getSDFeeSpace() {
 		StatFs sf = new StatFs(SDPath);
-		long feespace = sf.getFreeBlocks() * sf.getBlockSize();
+		long feespace = (long)sf.getFreeBlocks() * sf.getBlockSize();
 		return feespace;
 	}
 
 	public long getSDAvailableSpace() {
 		StatFs sf = new StatFs(SDPath);
-		long availablespace = sf.getAvailableBlocks() * sf.getBlockSize();
+		long availablespace = (long)sf.getAvailableBlocks() * sf.getBlockSize();
 		return availablespace;
 	}
 
 	public long getSDBlockSpace() {
 		StatFs sf = new StatFs(SDPath);
-		long blockspace = sf.getBlockCount() * sf.getBlockSize();
+		long blockspace = (long)sf.getBlockCount() * sf.getBlockSize();
 		return blockspace;
 	}
 
@@ -84,20 +84,20 @@ public class FileUtil {
 			createDir(dirname);
 			System.out.println("writepathdir is " + dirname + filename
 					+ ".temp");
-			files = createFile(dirname + "/" + filename + ".temp");// ÏÈ´´½¨ÒÔ.temp½áÎ²µÄÁÙÊ±ÎÄ¼ş
+			files = createFile(dirname + "/" + filename + ".temp");// å…ˆåˆ›å»ºä»¥.tempç»“å°¾çš„ä¸´æ—¶æ–‡ä»¶
 			fos = new FileOutputStream(files);
 			byte[] buffer = new byte[1024];
 			int data = 0;
 			while ((data = fis.read(buffer)) > 0) {
 				fos.write(buffer, 0, data);
 			}
-			File newfile = new File(SDPath + dirname + "/" + filename);// ×îÖÕÎÄ¼şÃû
-			files.renameTo(newfile);// ½«.tempÎÄ¼ş¸ÄÃûÎª×îÖÕÎÄ¼şÃû
-			System.out.println("³É¹¦¸ÄÃû" + SDPath + dirname + "/" + filename);
-		} catch (IOException e) {
-			// ³ö´í¾ÍÉ¾³ıµ±Ç°ÁÙÊ±ÎÄ¼ş
+			File newfile = new File(SDPath + dirname + "/" + filename);// æœ€ç»ˆæ–‡ä»¶å
+			files.renameTo(newfile);// å°†.tempæ–‡ä»¶æ”¹åä¸ºæœ€ç»ˆæ–‡ä»¶å
+			System.out.println("æˆåŠŸæ”¹å" + SDPath + dirname + "/" + filename);
+		} catch (Exception e) {
+			// å‡ºé”™å°±åˆ é™¤å½“å‰ä¸´æ—¶æ–‡ä»¶
 			files.delete();
-			System.out.println("³ö´íÉ¾³ıÁÙÊ±ÎÄ¼ş£º" + files);
+			System.out.println("å‡ºé”™åˆ é™¤ä¸´æ—¶æ–‡ä»¶ï¼š" + files);
 			e.printStackTrace();
 		} finally {
 			fos.close();

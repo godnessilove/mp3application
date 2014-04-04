@@ -50,7 +50,7 @@ public class XmlConnentHanndle extends DefaultHandler{
 	@Override
 	public void endDocument() throws SAXException {
 	
-		System.out.println("³É¹¦½áÊø¶ÁÈ¡ÎÄµµ");
+		System.out.println("æˆåŠŸç»“æŸè¯»å–æ–‡æ¡£");
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class XmlConnentHanndle extends DefaultHandler{
 
 	@Override
 	public void startDocument() throws SAXException {
-		System.out.println("³É¹¦¿ªÊ¼¶ÁÈ¡ÎÄµµ");
+		System.out.println("æˆåŠŸå¼€å§‹è¯»å–æ–‡æ¡£");
 		super.startDocument();
 	}
 

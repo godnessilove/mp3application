@@ -20,37 +20,37 @@ public class DProvider {
 
 	public static DProvider getInstance(Context context) {
 		if (sInstance == null) {
-			System.out.println("½øÈëµ¥ÀıÄ£Ê½");
+			System.out.println("è¿›å…¥å•ä¾‹æ¨¡å¼");
 			sInstance = new DProvider(context.getApplicationContext());
 		}
 		return sInstance;
 	}
 
 	public DProvider(Context context) {
-		System.out.println("½øÈë¹¹ÔìÆ÷");
+		System.out.println("è¿›å…¥æ„é€ å™¨");
 		dhelper = new DateBaseHelper(context);
 		db = dhelper.getWritableDatabase();
 	}
 
-	// Ã¿´ÎµÄ³õÊ¼»¯È«²¿¸èÇú²¥·ÅÁĞ±í²åÈëÊı¾İ
+	// æ¯æ¬¡çš„åˆå§‹åŒ–å…¨éƒ¨æ­Œæ›²æ’­æ”¾åˆ—è¡¨æ’å…¥æ•°æ®
 	public void addDate(String tablename, List<Mp3Info> locallist) {
-		// µ±±íÀï²»´æÔÚµÄÊ±ºò£¬Ôö¼ÓÒ»Ìõmp3¼ÇÂ¼
+		Cursor result ;
+		// å½“è¡¨é‡Œä¸å­˜åœ¨çš„æ—¶å€™ï¼Œå¢åŠ ä¸€æ¡mp3è®°å½•
 		String sql = "insert into " + tablename + " values(?,?,?,?,?,?) ";
-		// µ±Ç°±íÀïÊÇ·ñ´æÔÚÕâÌõMP3¼ÇÂ¼(×´Ì¬¿ÉÒÔÊÇ2Ò²¿ÉÒÔÊÇ3)
+		// å½“å‰è¡¨é‡Œæ˜¯å¦å­˜åœ¨è¿™æ¡MP3è®°å½•(çŠ¶æ€å¯ä»¥æ˜¯2ä¹Ÿå¯ä»¥æ˜¯3)
 		String sql1 = "select * from " + tablename + " where "
 				+ PlayMp3ListTable.getMp3name() + " = ? ";
-		// Èç¹ûµ±Ç°ÓĞÕâÌõ¼ÇÂ¼£¬²»¹Ü×´Ì¬ÊÇ¼¸£¬¶¼ÖÃ³É3£¬±íÊ¾Mp3ÔÚ±¾µØÁË
+		// å¦‚æœå½“å‰æœ‰è¿™æ¡è®°å½•ï¼Œä¸ç®¡çŠ¶æ€æ˜¯å‡ ï¼Œéƒ½ç½®æˆ3ï¼Œè¡¨ç¤ºMp3åœ¨æœ¬åœ°äº†
 		String sql2 = "update " + tablename + " set state = '3' where "
 				+ PlayMp3ListTable.getMp3name() + " = ? ";
-		// ½«ËùÓĞmp3ÖÃ³É×´Ì¬2,±íÊ¾Ôø¾­´æÔÚ¹ı£¬ÏÖÔÚÃ»ÁË
+		// å°†æ‰€æœ‰mp3ç½®æˆçŠ¶æ€2,è¡¨ç¤ºæ›¾ç»å­˜åœ¨è¿‡ï¼Œç°åœ¨æ²¡äº†
 		String sql3 = "update " + tablename + " set state = '2' ";
 		;
-		// ¿ªÊ¼ÊÂÎñ
+		// å¼€å§‹äº‹åŠ¡
 		db.beginTransaction();
 		db.execSQL(sql3);
 		for (Mp3Info mp3Info : locallist) {
-			Cursor result = db.rawQuery(sql1,
-					new String[] { mp3Info.getMp3name() });
+			result = db.rawQuery(sql1, new String[] { mp3Info.getMp3name() });
 			if (result.getCount() == 0) {
 				String mp3path = util.getMp3Path(mp3Info.getMp3name(), "mp3");
 				String lrcpath = util.getMp3Path(
@@ -60,13 +60,14 @@ public class DProvider {
 			} else if ((result.getCount() == 1)) {
 				db.execSQL(sql2, new String[] { mp3Info.getMp3name() });
 			}
+			result.close();
 		}
 		db.setTransactionSuccessful();
 		db.endTransaction();
-		// dbClose();
+
 	}
 
-	// ĞÂ½¨²¥·ÅÁĞ±í
+	// æ–°å»ºæ’­æ”¾åˆ—è¡¨
 	public void insertList(String listname, List<Integer> chooselist) {
 		String sql = "insert into " + DateBaseHelper.getAlltablename()
 				+ " values( ?,?)";
@@ -78,10 +79,10 @@ public class DProvider {
 		db.endTransaction();
 	}
 
-	// ²éÔƒÈ«²¿²¥·ÅÁĞ±í
+	// æŸ¥è©¢å…¨éƒ¨æ’­æ”¾åˆ—è¡¨
 	public List<String> queryList(String tablename) {
 		List<String> list = new ArrayList<String>();
-		list.add("È«²¿¸èÇú");
+		list.add("å…¨éƒ¨æ­Œæ›²");
 		String sql = "select distinct " + PlayListTable.getTableName()
 				+ " from " + tablename;
 		Cursor result = db.rawQuery(sql, null);
@@ -91,7 +92,7 @@ public class DProvider {
 			String name = result.getString(index_name);
 			list.add(name);
 		}
-		list.add("ĞÂÔö²¥·ÅÁĞ±í");
+		list.add("æ–°å¢æ’­æ”¾åˆ—è¡¨");
 		result.close();
 		return list;
 	}
@@ -118,7 +119,7 @@ public class DProvider {
 
 	public void deleteTable(String tablename) {
 		db.execSQL("delete from " + tablename);
-		// ½²±íµÄ×ÔÔö_id³õÊ¼»¯Îª0
+		// è®²è¡¨çš„è‡ªå¢_idåˆå§‹åŒ–ä¸º0
 		db.execSQL("update sqlite_sequence set seq = 0 where name = '"
 				+ tablename + "' and seq <> 0");
 
@@ -134,7 +135,7 @@ public class DProvider {
 		String localpath = "mp3";
 		FileUtil fileutil = new FileUtil();
 		List<Mp3Info> locallist = fileutil.getFileList(localpath);
-		// ²åÈëlocallistÊı¾İµ½È«²¿²¥·ÅÁĞ±í
+		// æ’å…¥locallistæ•°æ®åˆ°å…¨éƒ¨æ’­æ”¾åˆ—è¡¨
 		addDate(DateBaseHelper.getTablelocalname(), locallist);
 	}
 
@@ -142,35 +143,34 @@ public class DProvider {
 		db.close();
 	}
 
-
 	public Map<String, String> nextMp3(String mp3path, String listname) {
 		String sql1 = "select a.* from " + DateBaseHelper.getTablelocalname()
 				+ " a where " + PlayMp3ListTable.getState()
-				+ " = '3'  and 'È«²¿¸èÇú' = '" + listname
+				+ " = '3'  and 'å…¨éƒ¨æ­Œæ›²' = '" + listname
 				+ "' or exists (select 1 from "
 				+ DateBaseHelper.getAlltablename() + " b where b."
 				+ PlayListTable.getTableName() + " = '" + listname
 				+ "' and a._id = b." + PlayListTable.getMp3Id()
 				+ " ) order by a._id";
-		Cursor cursor = db.rawQuery(sql1, null);
-		cursor.moveToFirst();
-		while (!(cursor.getString(cursor
-				.getColumnIndex(PlayMp3ListTable.getMp3path())).equals(mp3path)))
-		{
-			cursor.moveToNext();
+		Cursor result = db.rawQuery(sql1, null);
+		result.moveToFirst();
+		while (!(result.getString(result.getColumnIndex(PlayMp3ListTable
+				.getMp3path())).equals(mp3path))) {
+			result.moveToNext();
 		}
-		if (!cursor.isLast()) {
-			cursor.moveToNext();
+		if (!result.isLast()) {
+			result.moveToNext();
 		} else {
-			cursor.moveToFirst();
+			result.moveToFirst();
 		}
-		String nextmp3name = cursor.getString(cursor
+		String nextmp3name = result.getString(result
 				.getColumnIndex(PlayMp3ListTable.getMp3name()));
-		String nextmp3path = cursor.getString(cursor
+		String nextmp3path = result.getString(result
 				.getColumnIndex(PlayMp3ListTable.getMp3path()));
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("mp3name", nextmp3name);
 		map.put("mp3path", nextmp3path);
+		result.close();
 		return map;
 	}
 }

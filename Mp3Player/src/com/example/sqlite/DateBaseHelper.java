@@ -29,7 +29,7 @@ public class DateBaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		//´´½¨±¾µØËùÓÐMp3µÄ±í
+		//åˆ›å»ºæœ¬åœ°æ‰€æœ‰Mp3çš„è¡¨
 		String sql = "create table " + getTablelocalname() + "("
 				+ "_id INTEGER PRIMARY KEY AUTOINCREMENT,"
 				+ PlayMp3ListTable.getMp3name() + " varchar(20),"
@@ -37,7 +37,7 @@ public class DateBaseHelper extends SQLiteOpenHelper {
 				+ PlayMp3ListTable.getMp3path() + " varchar(100),"
 				+ PlayMp3ListTable.getLrcpath() + " varchar(100),"
 				+ PlayMp3ListTable.getState() + " number(2) )";
-		//´´½¨ËùÓÐ²¥·ÅÁÐ±íµÄ±í
+		//åˆ›å»ºæ‰€æœ‰æ’­æ”¾åˆ—è¡¨çš„è¡¨
 		String sql2 = "create table " + getAlltablename() + "("
 				+ PlayListTable.getTableName() + " varchar(50),"
 				+ PlayListTable.getMp3Id() + " number )";

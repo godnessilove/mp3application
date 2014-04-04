@@ -2,7 +2,6 @@ package com.example.adapter;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import com.example.mp3player.R;
 import com.example.sqlite.PlayMp3ListTable;
@@ -12,7 +11,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -23,7 +21,7 @@ import android.widget.TextView;
 @SuppressLint({ "NewApi", "UseSparseArrays" })
 public class mp3ListAdapter extends SimpleCursorAdapter {
 	private LayoutInflater inflater;
-	// mapÓÃÀ´¼ÇÂ¼Ñ¡ÖĞÏî
+	// mapç”¨æ¥è®°å½•é€‰ä¸­é¡¹
 	public HashMap<Integer, Boolean> isSelected = new HashMap<Integer, Boolean>();
 	private Cursor cursor;
 
@@ -32,7 +30,7 @@ public class mp3ListAdapter extends SimpleCursorAdapter {
 		super(context, layout, c, from, to, flags);
 		this.inflater = LayoutInflater.from(context);
 		this.cursor = c;
-		// ³õÊ¼»¯×´Ì¬±í£¬È«¶¼ÊÇÎ´Ñ¡×´Ì¬
+		// åˆå§‹åŒ–çŠ¶æ€è¡¨ï¼Œå…¨éƒ½æ˜¯æœªé€‰çŠ¶æ€
 		while (c.moveToNext()) {
 			int id = cursor.getInt(cursor
 					.getColumnIndex(android.provider.BaseColumns._ID));
@@ -67,7 +65,7 @@ public class mp3ListAdapter extends SimpleCursorAdapter {
 			viewholde = (ViewHolde) convertView.getTag();
 		}
 
-		// È¡µ±Ç°¼ÇÂ¼µÄ_id
+		// å–å½“å‰è®°å½•çš„_id
 		cursor.moveToPosition(position);
 
 		final int id = cursor.getInt(cursor
@@ -88,12 +86,12 @@ public class mp3ListAdapter extends SimpleCursorAdapter {
 					}
 				});
 
-		// ·ÀÖ¹ÍÏ¶¯ÁĞ±íÔì³É×´Ì¬¶ªÊ§
+		// é˜²æ­¢æ‹–åŠ¨åˆ—è¡¨é€ æˆçŠ¶æ€ä¸¢å¤±
 		viewholde.check.setChecked(isSelected.get(id));
 		return convertView;
 	}
 
-	// ÇóÈ¡ÓĞ¶àÉÙ¸öÊÇÑ¡ÉÏµÄ
+	// æ±‚å–æœ‰å¤šå°‘ä¸ªæ˜¯é€‰ä¸Šçš„
 	public int count() {
 		Collection<Boolean> collection = isSelected.values();
 		int count = 0;
@@ -105,7 +103,7 @@ public class mp3ListAdapter extends SimpleCursorAdapter {
 		return count;
 	}
 
-	class ViewHolde {
+	 static class ViewHolde {
 
 		public TextView nametext;
 

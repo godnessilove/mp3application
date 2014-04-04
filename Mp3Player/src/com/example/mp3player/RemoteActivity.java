@@ -60,13 +60,13 @@ public class RemoteActivity extends ListFragment {
 		if (UPDATE == item.getItemId()) {
 			new Thread() {
 				public void run() {
-					list = DownLoad("http://192.168.2.10:8080/mp3/resources.xml");
-					System.out.println("ÏÂÔØÁĞ±í³É¹¦£º" + list);
+					list = DownLoad("http://192.168.2.13:8080/mp3/resources.xml");
+					System.out.println("ä¸‹è½½åˆ—è¡¨æˆåŠŸï¼š" + list);
 					handler.post(s);
 				}
 			}.start();
 		}else if (ABOUT == item.getItemId()){
-			System.out.println("¹ØÓÚ£º¿ª·¢ÖĞ");
+			System.out.println("å…³äºï¼šå¼€å‘ä¸­");
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -77,7 +77,7 @@ public class RemoteActivity extends ListFragment {
 		public void run() {
 			mp3list = parse(list);
 			sim = buildSimpleAdapter(mp3list);
-			//±ØĞëÔÚUIÏß³ÌÖĞ²Ù×÷
+			//å¿…é¡»åœ¨UIçº¿ç¨‹ä¸­æ“ä½œ
 			setListAdapter(sim);
 		}
 	};
@@ -85,7 +85,7 @@ public class RemoteActivity extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		System.out.println("µã»÷µÄÊÇ£º" + mp3list.get(position).getMp3name() );
+		System.out.println("ç‚¹å‡»çš„æ˜¯ï¼š" + mp3list.get(position).getMp3name() );
 		Mp3Info mp3info = mp3list.get(position);
 		Intent intent = new Intent();
 		intent.putExtra("mp3info", mp3info);
