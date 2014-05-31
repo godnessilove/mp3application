@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mp3Player</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- 远程更新的网址 -->
+    <string name="https">http://192.168.2.7:8080/mp3/</string>
+    
+    <string name="TabPlay">播放</string>
+    <string name="TabPlayList">列表</string>
+    <string name="TabDown">下载</string>
+    <string name="TabMore">更多</string>
+    
+    <string name="Mp3Name">mp3名称</string>
+    <string name="Singer">歌手</string>
+    <string name="Album">专辑</string>
+    
+    <!-- 本地列表标签与菜单  -->
+    <string name="tab222_name">本地列表</string>
+	<string name="tab222_menu_1">更新播放列表</string>
+	<string name="tab222_menu_2">刪除目前的播放列表</string>
+	
+	<string name="tab000_menu">退出</string>
+	
+	<!-- 服务器列表标签与菜单-->
+	<string name="tab111_name">服务器列表</string>
+	<string name="tab111_menu_1">更新列表</string>
+	<string name="tab111_menu_2">关于</string>
+	
+	<!-- 播放列表，全部歌曲，必须要有 ,全部歌曲排第一个，新建播放列表放最后一个-->
+	<string name="playlist_default">全部歌曲</string>
+	<string name="playlist_default_last">新建播放列表</string>
+	
+	<!-- 显示歌词时，若是没有，显示的内容 -->
+	<string name="nolrc">未找到歌词</string>
+	
+	<!-- ChooseMp3Activity中的添加按钮 、全选/反选按钮,默认值-->
+	<string name="addbutton">添加</string>
+	<string name="choose">全选</string>
+	<string name="unchoose">反选</string>
+	<string name="addbuttondef">添加(0)</string>
+	<!-- ChooseMp3Activity新增播放列表失败 -->
+	<string name="addfalse">插入歌曲进播放列表失败，新增失败</string>
+	
+	<!-- 新增播放列表通知栏确认、取消按钮 -->
+	<string name="dialogpositive">确定</string>
+	<string name="dialognegative">取消</string>
+	<!-- 输入为空的时候的提示,已经存在的提示 ,删除成功提示删除成功-->
+	<string name="playlistnotnull">播放列表不能为空</string>
+	<string name="playlistexist">播放列表已经存在</string>
+	<string name="input">请输入播放列表名称</string>
+	<string name="deletesuccess">删除成功</string>
+	<string name="deletefail">删除失敗</string>
+	
+	<!-- mp3通知栏中的播放状态 -->
+	<string name="mp3NotifiPlayTextIng">正在播放</string>
+	<string name="mp3NotifiPlayTextPause">暂停播放</string>
+	
+	<!-- 本地指定mp3目录下所有的mp3文件信息表 -->
+	<string name="tablelocalname">local_mp3_list_all</string>
+	<string name="ID">id</string>
+	<string name="TILTE">tilte</string>
+	<string name="THUMB">thumb</string>
+	<string name="ARTIST">artist</string>
+	<string name="ALBUM">album</string>
+	<string name="ALBUM_ID">album_id</string>
+	<string name="URL">url</string>
+	<string name="DURATION">duration</string>
+	<string name="SIZE">size</string>
+	<string name="LRCPATH">lrcpath</string>
+	<string name="STATE">state</string>
+	<!-- 记录播放列表的表 -->
+	<string name="alltablename">mp3_list_name</string>
+	<string name="TABLE_NAME">table_name</string>
+	<string name="MP3_ID">MP3_ID</string>
+	
+	<!-- 下载歌曲通知栏显示的text -->
+	<string name="downNotifiText">准备下载</string>
+	<string name="downNotifiTextErr">下载出错</string>
+	<string name="downNotifiTextIng">正在下载</string>
+	<string name="downNotifiTextOK">下载完成</string>
+	<string name="downNotifiTextExist">已经下载</string>
+	<string name="downNotifiTextNegative">取消下载</string>
+	
+</resources>

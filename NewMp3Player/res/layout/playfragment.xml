@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="2dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="2dp" >
+
+    <TextView
+        android:id="@+id/Mp3Name"
+        style="@style/roll_text"
+        android:layout_width="181dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/PlayMode"
+        android:text="@string/Mp3Name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/Singer"
+        style="@style/roll_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/Mp3Name"
+        android:layout_alignRight="@+id/Mp3Name"
+        android:layout_below="@+id/Mp3Name"
+        android:layout_marginTop="16dp"
+        android:text="@string/Singer" />
+
+     <TextView
+        android:id="@+id/Album"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/Singer"
+        android:layout_alignRight="@+id/Mp3Name"
+        android:layout_below="@+id/Singer"
+        android:layout_marginTop="19dp"
+        style="@style/roll_text"
+        android:text="@string/Album" />
+
+     <ImageButton
+         android:id="@+id/PlayMode"
+         android:layout_width="48dp"
+         android:layout_height="48dp"
+         android:layout_alignParentRight="true"
+         android:layout_alignTop="@+id/Mp3Name"
+         android:src="@drawable/ic_mp_repeat_all_btn" />
+
+     <com.example.lrc.LrcView
+         android:id="@+id/Lyric"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:layout_above="@+id/PlayButton"
+         android:layout_alignLeft="@+id/Album"
+         android:layout_alignRight="@+id/PlayMode"
+         android:layout_below="@+id/Album"
+         android:layout_marginTop="14dp"
+         android:layout_marginBottom="14dp"/>
+         <!-- android:gravity="center"
+         android:text="@string/NullLyric" -->
+
+     <SeekBar
+         android:id="@+id/seekBar1"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_alignParentLeft="true" />
+
+     <ImageButton
+         android:id="@+id/PlayButton"
+         android:layout_width="48dp"
+         android:layout_height="48dp"
+         android:layout_above="@+id/seekBar1"
+         android:layout_alignLeft="@+id/seekBar1"
+         android:layout_marginLeft="72dp"
+         android:src="@drawable/ic_appwidget_music_play" />
+
+     <ImageButton
+         android:id="@+id/NextButton"
+         android:layout_width="48dp"
+         android:layout_height="48dp"
+         android:layout_above="@+id/seekBar1"
+         android:layout_alignRight="@+id/Album"
+         android:layout_marginRight="22dp"
+         android:src="@drawable/ic_appwidget_music_next" />
+
+     <TextView
+         android:id="@+id/mDuration"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignBottom="@+id/PlayButton"
+         android:layout_alignLeft="@+id/seekBar1" />
+
+     <TextView
+         android:id="@+id/alltime"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignBottom="@+id/NextButton"
+         android:layout_alignRight="@+id/seekBar1" />
+
+     <Button
+         android:id="@+id/button1"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignRight="@+id/Lyric"
+         android:layout_below="@+id/Singer"
+         android:text="text" />
+     
+</RelativeLayout>
