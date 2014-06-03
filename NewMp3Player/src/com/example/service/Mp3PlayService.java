@@ -32,7 +32,7 @@ public class Mp3PlayService extends Service implements
 	private String mp3name = null;
 	private MediaPlayer m = null;
 	private int threadid;
-	// private int startId;
+	private int startId;
 	// 默认刚开始的时候是没有获得焦点的
 	private int audiofocus = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
 	private Boolean ispause = false;
@@ -153,7 +153,7 @@ public class Mp3PlayService extends Service implements
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		threadid = Thread.currentThread().hashCode();
 		msg = intent.getStringExtra("msg");
-		// this.startId = startId;
+		this.startId = startId;
 		Log.i(tag, "onStartCommand" + msg);
 		if (msg.equals("START")) {
 			// 如果沒有播放器

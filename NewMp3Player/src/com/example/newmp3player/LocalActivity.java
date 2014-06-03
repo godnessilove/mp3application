@@ -4,11 +4,15 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ListFragment;
@@ -27,12 +31,14 @@ import android.widget.Toast;
 
 import com.example.dialog.NewPlaylistDialog;
 import com.example.sqlite.DProvider;
+import com.example.newmp3player.RefreshableView.PullToRefreshListener;
 
 @SuppressLint({ "HandlerLeak", "NewApi" })
 public class LocalActivity extends ListFragment {
 	private Spinner spinner = null;
 	private String selection = null;
 	private ArrayAdapter<String> arrayadapter = null;
+	private SimpleCursorAdapter adapter;
 	private ArrayList<String> list = new ArrayList<String>();
 	private Cursor cursor;
 	public final static String MP3_SHARED = "MP3_SHARED";
@@ -40,16 +46,20 @@ public class LocalActivity extends ListFragment {
 	private SharedPreferences mPrefs;
 	private MyHandler myhandler;
 	private DProvider dprovider;
+	private RefreshableView refreshableView;
+	private String tag = "LocalActivity";
 
-	public interface LocalFragmentListener{
+	private Receiver1 receiver1;
+
+	public interface LocalFragmentListener {
 		public void onMp3Selected(Bundle bundle);
 	}
-	
+
 	LocalFragmentListener mListener;
-	
+
 	@Override
 	public void onAttach(Activity activity) {
-		
+
 		super.onAttach(activity);
 		// Verify that the host activity implements the callback interface
 		try {
@@ -62,8 +72,7 @@ public class LocalActivity extends ListFragment {
 					+ " must implement LocalFragmentListener");
 		}
 	}
-	
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.i("LocalActivity", "LocalActivity is onCreate");
@@ -79,11 +88,40 @@ public class LocalActivity extends ListFragment {
 		return inflater.inflate(R.layout.local_mp3_item, container, false);
 
 	}
-	
+
 	@Override
 	public void onStart() {
+
+		// 注册广播
+		if (receiver1 == null) {
+			receiver1 = new Receiver1();
+			// 若是想接收到mediaScanner相关的广播，必须加
+			IntentFilter filter = new IntentFilter(
+					Intent.ACTION_MEDIA_SCANNER_STARTED);
+			filter.addDataScheme("file");
+			filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
+			LocalActivity.this.getActivity()
+					.registerReceiver(receiver1, filter);
+		}
+
+		// 下拉更新
+		refreshableView = (RefreshableView) getActivity().findViewById(
+				R.id.refreshable_view);
+
+		refreshableView.setOnRefreshListener(new PullToRefreshListener() {
+
+			public void onRefresh() {
+				getActivity().sendBroadcast(
+						new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri
+								.parse("file://"
+										+ Environment
+												.getExternalStorageDirectory()
+												.getAbsolutePath())));
+			}
+		}, 0);
 		// 同一个应用中使用的getpreferences
-		mPrefs = getActivity().getSharedPreferences(MP3_SHARED, Context.MODE_PRIVATE);
+		mPrefs = getActivity().getSharedPreferences(MP3_SHARED,
+				Context.MODE_PRIVATE);
 		dprovider = DProvider.getInstance(getActivity());
 		myhandler = new MyHandler();
 		spinner = (Spinner) getActivity().findViewById(R.id.spinner1);
@@ -92,10 +130,6 @@ public class LocalActivity extends ListFragment {
 		view.getBackground().setAlpha(100);
 		super.onStart();
 	}
-
-
-	
-	
 
 	@Override
 	public void onResume() {
@@ -108,7 +142,7 @@ public class LocalActivity extends ListFragment {
 
 	}
 
-	//查询spinner所有的播放列表
+	// 查询spinner所有的播放列表
 	private final class Thread1 extends Thread {
 		@Override
 		public void run() {
@@ -120,7 +154,7 @@ public class LocalActivity extends ListFragment {
 
 	}
 
-	//查詢mp3列表
+	// 查詢mp3列表
 	private final class Thread2 extends Thread {
 		@Override
 		public void run() {
@@ -136,7 +170,7 @@ public class LocalActivity extends ListFragment {
 
 	}
 
-	//刪除指定播放列表
+	// 刪除指定播放列表
 	private final class Thread3 extends Thread {
 		private String listname;
 
@@ -147,9 +181,9 @@ public class LocalActivity extends ListFragment {
 
 		@Override
 		public void run() {
-			//返回刪除是否成功,0表示成功,-1表示失敗
+			// 返回刪除是否成功,0表示成功,-1表示失敗
 			int b = dprovider.deleteDate(listname);
-			
+
 			Message msg = new Message();
 			msg.what = 3;
 			msg.arg1 = b;
@@ -157,8 +191,7 @@ public class LocalActivity extends ListFragment {
 		}
 	}
 
-	
-	//处理需要在主线程中操作控件的handler
+	// 处理需要在主线程中操作控件的handler
 	private final class MyHandler extends Handler {
 
 		@Override
@@ -192,20 +225,29 @@ public class LocalActivity extends ListFragment {
 				String[] from = new String[] { getString(R.string.TILTE),
 						getString(R.string.ARTIST) };
 				int[] to = new int[] { R.id.mp3name, R.id.mp3size };
-				SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-						getActivity(), R.layout.mp3info_item, cursor, from, to,
-						0);
+				adapter = new SimpleCursorAdapter(getActivity(),
+						R.layout.mp3info_item, cursor, from, to, 0);
 				setListAdapter(adapter);
 				break;
-			//提示删除播放列表是否成功，并刷新
+			// 提示删除播放列表是否成功，并刷新
 			case 3:
-				if(msg.arg1 == 0 ){
-					Toast.makeText(getActivity(),getString(R.string.deletesuccess) , Toast.LENGTH_SHORT).show();
-				}else if (msg.arg1 == -1 ){
-					Toast.makeText(getActivity(),getString(R.string.deletefail) , Toast.LENGTH_SHORT).show();
+				if (msg.arg1 == 0) {
+					Toast.makeText(getActivity(),
+							getString(R.string.deletesuccess),
+							Toast.LENGTH_SHORT).show();
+				} else if (msg.arg1 == -1) {
+					Toast.makeText(getActivity(),
+							getString(R.string.deletefail), Toast.LENGTH_SHORT)
+							.show();
 
 				}
 				LocalActivity.this.onResume();
+				break;
+			case 4:
+				Toast.makeText(getActivity(), getString(R.string.updateOk), Toast.LENGTH_SHORT).show();
+				break;
+			case 5:
+				Toast.makeText(getActivity(), getString(R.string.deleteFalse), Toast.LENGTH_SHORT).show();
 				break;
 			}
 
@@ -260,27 +302,57 @@ public class LocalActivity extends ListFragment {
 	// 点击菜单项的事件
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.i("LocalActivity","LocalActivity is isVisible" +  isVisible());
-		if(isVisible()){
-		String listname = spinner.getSelectedItem().toString();
-		// 当选择删除当前播放列表的时候，删除数据库中的对应值，刷新该activity
-		switch (item.getItemId()) {
-		case 2:
-			//开线程删除播放李彪
-			Thread3 thread3 = new Thread3(listname);
-			thread3.start();
-			break;
-		case 1:
-			// 进入选择添加mp3的activity
-			Intent intent = new Intent();
-			intent.setClass(getActivity(), ChooseMp3Activity.class);
-			intent.putExtra("listname", listname);
-			startActivity(intent);
-			break;
+		Log.i("LocalActivity", "LocalActivity is isVisible" + isVisible());
+		if (isVisible()) {
+			String listname = spinner.getSelectedItem().toString();
+			// 当选择删除当前播放列表的时候，删除数据库中的对应值，刷新该activity
+			switch (item.getItemId()) {
+			case 2:
+				// 开线程删除播放李彪
+				if(listname.equals(getString(R.string.playlist_default))||listname.equals(getString(R.string.playlist_default_last))){
+				Thread3 thread3 = new Thread3(listname);
+				thread3.start();
+				}else {
+					Message msg = new Message();
+					msg.what = 5;
+					myhandler.sendMessage(msg);
+				}
+				break;
+			case 1:
+				// 进入选择添加mp3的activity
+				Intent intent = new Intent();
+				intent.setClass(getActivity(), ChooseMp3Activity.class);
+				intent.putExtra("listname", listname);
+				startActivity(intent);
+				break;
+			}
+
+			return super.onOptionsItemSelected(item);
+		} else
+			return false;
+	}
+
+	// 监听扫描sd卡mp3文件信息广播
+	class Receiver1 extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+			if (arg1.getAction().equals(Intent.ACTION_MEDIA_SCANNER_STARTED)) {
+				Log.i(tag, "MediaScannerReceiver 开始扫描");
+			} else if (arg1.getAction().equals(
+					Intent.ACTION_MEDIA_SCANNER_FINISHED)) {
+				Log.i(tag, "MediaScannerReceiver 结束扫描");
+				DProvider dprovider = DProvider.getInstance(getActivity());
+				dprovider.InitDate();
+				Thread2 thread2 = new Thread2();
+				thread2.start();
+				refreshableView.finishRefreshing();
+				Message msg = new Message();
+				msg.what = 4;
+				myhandler.sendMessage(msg);
+			}
 		}
 
-		return super.onOptionsItemSelected(item);
-		}else return false;
 	}
 
 	@Override
@@ -304,17 +376,24 @@ public class LocalActivity extends ListFragment {
 	public void onStop() {
 		Log.i("LocalActivity", "LocalActivity is onStop");
 		super.onStop();
-		if(myhandler != null){
+		if (myhandler != null) {
 			myhandler.removeCallbacksAndMessages(null);
 		}
+		if (receiver1 != null) {
+			getActivity().unregisterReceiver(receiver1);
+			receiver1 = null;
+		}
 	}
-	
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(myhandler != null){
+		if (myhandler != null) {
 			myhandler.removeCallbacksAndMessages(null);
+		}
+		if (receiver1 != null) {
+			getActivity().unregisterReceiver(receiver1);
+			receiver1 = null;
 		}
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();

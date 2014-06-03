@@ -1,12 +1,9 @@
 package com.example.newmp3player;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.example.fileutil.FileUtil;
 import com.example.lrc.LrcProcess;
 import com.example.lrc.LrcView;
 import com.example.service.Mp3PlayService;
@@ -21,16 +18,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.IntentSender.SendIntentException;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -40,7 +31,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -84,7 +74,6 @@ public class TabPlayFragment extends Fragment {
 
 	private String mp3listname;
 	private Receiver receiver;
-	private Receiver1 receiver1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -118,21 +107,6 @@ public class TabPlayFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		Log.i(tag, "TabPlayFragment is onActivityCreated");
 		mp3serivce = null;
-
-		Button buttontext = (Button) getActivity().findViewById(R.id.button1);
-		buttontext.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				Intent intent = new Intent(
-						android.content.Intent.ACTION_MEDIA_MOUNTED);
-				Uri uri = Uri.parse("file://"
-						+ Environment.getExternalStorageDirectory() + "/mp3");
-				intent.setData(uri);
-				getActivity().sendBroadcast(intent);
-			}
-		});
 
 		seekbar = (SeekBar) getActivity().findViewById(R.id.seekBar1);
 		button1 = (ImageButton) getActivity().findViewById(R.id.PlayButton);
@@ -295,17 +269,6 @@ public class TabPlayFragment extends Fragment {
 					filter);
 		}
 
-		// 注册广播
-		if (receiver1 == null) {
-			receiver1 = new Receiver1();
-			// 若是想接收到mediaScanner相关的广播，必须加
-			IntentFilter filter = new IntentFilter(
-					Intent.ACTION_MEDIA_SCANNER_STARTED);
-			filter.addDataScheme("file");
-			filter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
-			TabPlayFragment.this.getActivity().registerReceiver(receiver1,
-					filter);
-		}
 
 		// 自动播放
 		if (!ispause) {
@@ -333,10 +296,6 @@ public class TabPlayFragment extends Fragment {
 		if (receiver != null) {
 			getActivity().unregisterReceiver(receiver);
 			receiver = null;
-		}
-		if (receiver1 != null) {
-			getActivity().unregisterReceiver(receiver1);
-			receiver1 = null;
 		}
 		// 解綁service
 		if (mp3serivce != null) {
@@ -643,22 +602,7 @@ public class TabPlayFragment extends Fragment {
 		}
 	}
 
-	// 监听扫描sd卡mp3文件信息广播
-	class Receiver1 extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context arg0, Intent arg1) {
-			if (arg1.getAction().equals(Intent.ACTION_MEDIA_SCANNER_STARTED)) {
-				Log.i(tag, "MediaScannerReceiver 开始扫描");
-			} else if (arg1.getAction().equals(
-					Intent.ACTION_MEDIA_SCANNER_FINISHED)) {
-				Log.i(tag, "MediaScannerReceiver 结束扫描");
-				DProvider dprovider = DProvider.getInstance(getActivity());
-				dprovider.InitDate();
-			}
-		}
-
-	}
+	
 
 	@Override
 	public void onDestroy() {
@@ -668,10 +612,7 @@ public class TabPlayFragment extends Fragment {
 			getActivity().unregisterReceiver(receiver);
 			receiver = null;
 		}
-		if (receiver1 != null) {
-			getActivity().unregisterReceiver(receiver1);
-			receiver1 = null;
-		}
+		
 
 		handler.removeCallbacksAndMessages(null);
 		super.onDestroy();

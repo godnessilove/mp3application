@@ -101,13 +101,5 @@
          android:layout_height="wrap_content"
          android:layout_alignBottom="@+id/NextButton"
          android:layout_alignRight="@+id/seekBar1" />
-
-     <Button
-         android:id="@+id/button1"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignRight="@+id/Lyric"
-         android:layout_below="@+id/Singer"
-         android:text="text" />
      
 </RelativeLayout>

@@ -21,6 +21,10 @@
 	<string name="tab222_menu_1">更新播放列表</string>
 	<string name="tab222_menu_2">刪除目前的播放列表</string>
 	
+	
+	<string name="deleteFalse">目前的播放列表不可以刪除</string>
+	<string name="updateOk">成功更新列表</string>
+	
 	<string name="tab000_menu">退出</string>
 	
 	<!-- 服务器列表标签与菜单-->
@@ -82,5 +86,15 @@
 	<string name="downNotifiTextOK">下载完成</string>
 	<string name="downNotifiTextExist">已经下载</string>
 	<string name="downNotifiTextNegative">取消下载</string>
+	
+	
+	<string name="pull_to_refresh">下拉可以刷新</string>
+	<string name="release_to_refresh">释放立即刷新</string>
+	<string name="refreshing">正在刷新…</string>
+	<string name="not_updated_yet">暂未更新过</string>
+	<string name="updated_at">上次更新于%1$s前</string>
+	<string name="updated_just_now">刚刚更新</string>
+	<string name="time_error">时间有问题</string>
+	
 	
 </resources>

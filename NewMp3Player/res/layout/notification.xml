@@ -35,7 +35,6 @@
         android:layout_height="73dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@android:drawable/ic_menu_add"
          />
 
     <LinearLayout
@@ -43,14 +42,14 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/linearLayout1"
         android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
         android:layout_marginLeft="1dp"
-        android:layout_toRightOf="@+id/linearLayout1"
          >
 
         <ImageButton
             android:id="@+id/imageButton1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             android:src="@android:drawable/ic_media_play"
             android:layout_gravity="center_vertical" 
@@ -58,8 +57,8 @@
 
         <ImageButton
             android:id="@+id/imageButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@android:drawable/ic_media_next"
             android:layout_weight="1" 
             android:background="#00000000"
