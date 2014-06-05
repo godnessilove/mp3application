@@ -3,14 +3,13 @@ package com.example.notification;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.widget.RemoteViews;
@@ -26,6 +25,7 @@ public class Mp3Notification {
 	private Context context;
 	private NotificationManager manager;
 	private Builder builder;
+
 	private String currlrcpath;
 	private String currmp3path;
 	private String currmp3name;
@@ -48,6 +48,11 @@ public class Mp3Notification {
 		return sInstance;
 	}
 
+	public Builder getBuilder() {
+		return builder;
+	}
+
+	
 	/**
 	 * 构造函数，以下部分经常要用，所以只在堆内存中创建一份
 	 * 
@@ -182,8 +187,12 @@ public class Mp3Notification {
 		builder.setOngoing(true);
 		builder.setAutoCancel(false);
 		// 放在前台...感觉浪费电
-		// startForeground(startId, builder.build());
+		//startForeground(startId, builder.build());
 		manager.notify(threadid, builder.build());
+	}
+	
+	public void notificationstartForeground(Service service,int id){
+		service.startForeground(id, builder.build());
 	}
 
 	public String getimage(String title) {

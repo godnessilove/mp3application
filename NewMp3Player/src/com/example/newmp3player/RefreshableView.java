@@ -393,39 +393,13 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 		String updateAtValue = getResources().getString(
 				R.string.not_updated_yet);
 		lastUpdateTime = preferences.getString(UPDATED_AT + mId, updateAtValue);
-		/*
-		 * long currentTime = System.currentTimeMillis(); long timePassed =
-		 * currentTime - lastUpdateTime; long timeIntoFormat; String
-		 * updateAtValue; if (lastUpdateTime == -1) { updateAtValue =
-		 * getResources().getString(R.string.not_updated_yet); } else if
-		 * (timePassed < 0) { updateAtValue =
-		 * getResources().getString(R.string.time_error); } else if (timePassed
-		 * < ONE_MINUTE) { updateAtValue =
-		 * getResources().getString(R.string.updated_just_now); } else if
-		 * (timePassed < ONE_HOUR) { timeIntoFormat = timePassed / ONE_MINUTE;
-		 * String value = timeIntoFormat + "分钟"; updateAtValue =
-		 * String.format(getResources().getString(R.string.updated_at), value);
-		 * } else if (timePassed < ONE_DAY) { timeIntoFormat = timePassed /
-		 * ONE_HOUR; String value = timeIntoFormat + "小时"; updateAtValue =
-		 * String.format(getResources().getString(R.string.updated_at), value);
-		 * } else if (timePassed < ONE_MONTH) { timeIntoFormat = timePassed /
-		 * ONE_DAY; String value = timeIntoFormat + "天"; updateAtValue =
-		 * String.format(getResources().getString(R.string.updated_at), value);
-		 * } else if (timePassed < ONE_YEAR) { timeIntoFormat = timePassed /
-		 * ONE_MONTH; String value = timeIntoFormat + "个月"; updateAtValue =
-		 * String.format(getResources().getString(R.string.updated_at), value);
-		 * } else { timeIntoFormat = timePassed / ONE_YEAR; String value =
-		 * timeIntoFormat + "年"; updateAtValue =
-		 * String.format(getResources().getString(R.string.updated_at), value);
-		 * }
-		 */
 		updateAt.setText(lastUpdateTime);
 	}
 
 	/**
 	 * 正在刷新的任务，在此任务中会去回调注册进来的下拉刷新监听器。
 	 * 
-	 * @author guolin
+	 * @author 
 	 */
 	class RefreshingTask extends AsyncTask<Void, Integer, Void> {
 
@@ -461,7 +435,7 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	/**
 	 * 隐藏下拉头的任务，当未进行下拉刷新或下拉刷新完成后，此任务将会使下拉头重新隐藏。
 	 * 
-	 * @author guolin
+	 * @author 
 	 */
 	class HideHeaderTask extends AsyncTask<Void, Integer, Integer> {
 
@@ -511,7 +485,7 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	/**
 	 * 下拉刷新的监听器，使用下拉刷新的地方应该注册此监听器来获取刷新回调。
 	 * 
-	 * @author guolin
+	 * @author 
 	 */
 	public interface PullToRefreshListener {
 

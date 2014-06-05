@@ -32,9 +32,9 @@ public class mp3ListAdapter extends SimpleCursorAdapter {
 		super(context, layout, c, from, to, flags);
 		this.inflater = LayoutInflater.from(context);
 		this.cursor = c;
-		this.context = context;
+		this.context = context.getApplicationContext();
 		// 初始化状态表，全都是未选状态
-		//this.cursor.moveToFirst();
+		this.cursor.moveToPosition(-1);
 		while (this.cursor.moveToNext()) {
 			int id = this.cursor.getInt(this.cursor
 					.getColumnIndex(android.provider.BaseColumns._ID));

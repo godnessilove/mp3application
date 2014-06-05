@@ -23,8 +23,7 @@
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="30dp" >
+        android:layout_height="match_parent" >
     </ListView>
 
     </com.example.newmp3player.RefreshableView>

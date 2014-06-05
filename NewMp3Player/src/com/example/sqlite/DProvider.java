@@ -112,8 +112,8 @@ public class DProvider {
 	public String queryimage(String title) {
 		String thumb = null;
 		Cursor result = null;
-		String sql = "select " + THUMB + " from " + TABLENAME + " where " + TILTE
-				+ " =  '" + title + "'";
+		String sql = "select " + THUMB + " from " + TABLENAME + " where "
+				+ TILTE + " =  '" + title + "'";
 		try {
 			result = db.rawQuery(sql, null);
 			while (result.moveToNext()) {
@@ -315,6 +315,26 @@ public class DProvider {
 		return b;
 	}
 
+	public boolean deleteList(String listname, List<Integer> chooselist) {
+		// 默认返回值为true
+		boolean b = true;
+		String sql = "delete from " + ALLTABLENAME + "  where " + TABLE_NAME
+				+ " = ? and " + MP3_ID + " = ? ";
+		db.beginTransaction();
+		try {
+			for (Integer integer : chooselist) {
+				db.execSQL(sql, new Object[] { listname, integer });
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+			b = false;
+		} finally {
+			db.endTransaction();
+		}
+		return b;
+	}
+
 	/**
 	 * 查詢全部播放列表
 	 * 
@@ -329,11 +349,13 @@ public class DProvider {
 		while (result.moveToNext()) {
 			int index_name = result.getColumnIndex(TABLE_NAME);
 			String name = result.getString(index_name);
+			Log.i("queryList", "name is " + name);
 			list.add(name);
 		}
 		// 最后加入新增播放表列选项
 		list.add(DEFAULT_LAST);
 		result.close();
+		Log.i("queryList", "spinner list is " + list);
 		return list;
 	}
 
@@ -359,6 +381,22 @@ public class DProvider {
 	public Cursor querydate(String selection) {
 		String sql = "select * from " + TABLENAME
 				+ " a where state = '3' and exists (select 1 from "
+				+ ALLTABLENAME + " b where a._id = b." + MP3_ID + " and b."
+				+ TABLE_NAME + " = '" + selection + "' ) order by a._id";
+		Cursor result = db.rawQuery(sql, null);
+		return result;
+	}
+	
+	/**
+	 * 查询指定播放列表的歌曲列表
+	 * 
+	 * @param selection
+	 *            指定查詢的播放列表
+	 * @return mp3信息cursor
+	 */
+	public Cursor queryoutsidedate(String selection) {
+		String sql = "select * from " + TABLENAME
+				+ " a where state = '3' and not exists (select 1 from "
 				+ ALLTABLENAME + " b where a._id = b." + MP3_ID + " and b."
 				+ TABLE_NAME + " = '" + selection + "' ) order by a._id";
 		Cursor result = db.rawQuery(sql, null);

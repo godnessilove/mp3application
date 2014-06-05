@@ -32,7 +32,7 @@ public class Mp3PlayService extends Service implements
 	private String mp3name = null;
 	private MediaPlayer m = null;
 	private int threadid;
-	private int startId;
+	//private int startId;
 	// 默认刚开始的时候是没有获得焦点的
 	private int audiofocus = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
 	private Boolean ispause = false;
@@ -98,10 +98,10 @@ public class Mp3PlayService extends Service implements
 	}
 
 	public void setPro(Float f) {
-		if(m != null){
-		int postion = (int) (m.getDuration() * f);
-		Log.i(tag, "f is " + f + ",postion is " + postion);
-		m.seekTo(postion);
+		if (m != null) {
+			int postion = (int) (m.getDuration() * f);
+			Log.i(tag, "f is " + f + ",postion is " + postion);
+			m.seekTo(postion);
 		}
 	}
 
@@ -153,7 +153,9 @@ public class Mp3PlayService extends Service implements
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		threadid = Thread.currentThread().hashCode();
 		msg = intent.getStringExtra("msg");
-		this.startId = startId;
+		//this.startId = startId;
+		//放在前台，手机长时间休眠时，不会被kill
+		notification.notificationstartForeground(Mp3PlayService.this,threadid);
 		Log.i(tag, "onStartCommand" + msg);
 		if (msg.equals("START")) {
 			// 如果沒有播放器
@@ -165,7 +167,7 @@ public class Mp3PlayService extends Service implements
 				notification.createNotifi(threadid, mp3name, mp3path,
 						mp3listname);
 				mp3start();
-				//getAudioFocus();
+				// getAudioFocus();
 			}
 			// 点击播放列表切换歌曲的时候
 			else if (mp3name.equals(intent.getStringExtra("mp3name")) == false) {
@@ -202,6 +204,7 @@ public class Mp3PlayService extends Service implements
 				updateActivity(mp3name, mp3path);
 			}
 		}
+		
 		return START_STICKY;
 	}
 
@@ -217,12 +220,12 @@ public class Mp3PlayService extends Service implements
 
 		}
 		if (audiofocus == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-			//mp3start();
+			// mp3start();
 			Log.i("Mp3PlayService getAudioFocus()", "获得audio焦点");
 			return true;
-		} else{
+		} else {
 			Log.i("Mp3PlayService getAudioFocus()", "未获得audio焦点");
-		return false;
+			return false;
 		}
 	}
 
@@ -270,8 +273,8 @@ public class Mp3PlayService extends Service implements
 		// 保存的暂停的时候，播放到了哪里
 		mDuration = mpfres.getInt("mDuration", 0);
 		m.seekTo(mDuration);
-		if(getAudioFocus()){
-		m.start();
+		if (getAudioFocus()) {
+			m.start();
 		}
 		// 更新通知栏为相应的图标
 		notification.updateButtonImage(threadid, true);
@@ -324,33 +327,35 @@ public class Mp3PlayService extends Service implements
 		playmode = mpfres.getString("playmode", "orderplay");
 		mp3listname = mpfres.getString("play_list",
 				getString(R.string.playlist_default));
-		if(mp3path == null){
-		mp3path = mpfres.getString("play_path", dprovider.querymp3defpath());
+		if (mp3path == null) {
+			mp3path = mpfres
+					.getString("play_path", dprovider.querymp3defpath());
 		}
-		//如果当前的播放列表被删除了，那么从"全部歌曲"本地存在的mp3里面查询
+		// 如果当前的播放列表被删除了，那么从"全部歌曲"本地存在的mp3里面查询
 		if (!dprovider.isListExists(mp3listname)) {
 			mp3listname = getString(R.string.playlist_default);
 		}
 		if (playmode.equals("orderplay")) {
 			// 点击通知栏换下一首歌的时候
-			Map<String, String> map = dprovider.nextMp3(mp3path, mp3listname,0);
+			Map<String, String> map = dprovider
+					.nextMp3(mp3path, mp3listname, 0);
 			mp3name = map.get("mp3name");
 			mp3path = map.get("mp3path");
 		} else if (playmode.equals("loopplay")) {
-		}else if (playmode.equals("randomplay")){
-			Map<String, String> map = dprovider.nextMp3(mp3path, mp3listname,1);
+		} else if (playmode.equals("randomplay")) {
+			Map<String, String> map = dprovider
+					.nextMp3(mp3path, mp3listname, 1);
 			mp3name = map.get("mp3name");
 			mp3path = map.get("mp3path");
 		}
 		initMediaPlayer();
 		// 下一首肯定是从头开始播放
-		//mDuration = 0;
+		// mDuration = 0;
 		SharedPreferences.Editor ed = mpfres.edit();
-		ed.putInt("mDuration",0);
+		ed.putInt("mDuration", 0);
 		ed.commit();
 		mp3start();
-		notification.updateMp3Notifi(threadid, mp3name, mp3path,
-				mp3listname);
+		notification.updateMp3Notifi(threadid, mp3name, mp3path, mp3listname);
 		updateActivity(mp3name, mp3path);
 	}
 
@@ -368,13 +373,15 @@ public class Mp3PlayService extends Service implements
 			m = null;
 		}
 		// 放弃音频焦点
-		if(audiomanager!=null){
+		if (audiomanager != null) {
 			audiomanager.abandonAudioFocus(listener);
 		}
-		// stopForeground(true);
 		// 删除通知栏
-		notification.deleteNotifi(threadid);
+		//notification.deleteNotifi(threadid);
+		stopForeground(true);
+		if(notification == null){
 		notification = null;
+		}
 		// 注销广播
 		if (stopreceiver != null) {
 			this.unregisterReceiver(stopreceiver);
@@ -399,8 +406,12 @@ public class Mp3PlayService extends Service implements
 		m = null;
 		// stopForeground(true);
 		// manager.cancelAll();
-		notification.deleteNotifi(threadid);
-		notification = null;
+		//notification.deleteNotifi(threadid);
+		//notification = null;
+		stopForeground(true);
+		if(notification == null){
+			notification = null;
+			}
 		// 放弃音频焦点
 		audiomanager.abandonAudioFocus(listener);
 		return true;

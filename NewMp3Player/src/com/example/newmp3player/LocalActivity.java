@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -29,6 +30,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.adapter.mp3ListAdapter;
 import com.example.dialog.NewPlaylistDialog;
 import com.example.sqlite.DProvider;
 import com.example.newmp3player.RefreshableView.PullToRefreshListener;
@@ -202,8 +204,6 @@ public class LocalActivity extends ListFragment {
 			case 1:
 				arrayadapter = new ArrayAdapter<String>(getActivity(),
 						R.layout.item, R.id.textViewId, list);
-				Log.i("MyHandler", "arrayadapter " + arrayadapter);
-				Log.i("MyHandler", "spinner " + spinner);
 				spinner.setAdapter(arrayadapter);
 				spinner.setOnItemSelectedListener(new spinnerOnchick());
 				// 获取保存的播放列表名
@@ -228,6 +228,8 @@ public class LocalActivity extends ListFragment {
 				adapter = new SimpleCursorAdapter(getActivity(),
 						R.layout.mp3info_item, cursor, from, to, 0);
 				setListAdapter(adapter);
+				//添加item长按事件
+				getListView().setOnItemLongClickListener(new onLongClickList());
 				break;
 			// 提示删除播放列表是否成功，并刷新
 			case 3:
@@ -244,10 +246,12 @@ public class LocalActivity extends ListFragment {
 				LocalActivity.this.onResume();
 				break;
 			case 4:
-				Toast.makeText(getActivity(), getString(R.string.updateOk), Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), getString(R.string.updateOk),
+						Toast.LENGTH_SHORT).show();
 				break;
 			case 5:
-				Toast.makeText(getActivity(), getString(R.string.deleteFalse), Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), getString(R.string.deleteFalse),
+						Toast.LENGTH_SHORT).show();
 				break;
 			}
 
@@ -280,6 +284,16 @@ public class LocalActivity extends ListFragment {
 
 	}
 
+	class onLongClickList implements OnItemLongClickListener {
+
+		@Override
+		public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+				int arg2, long arg3) {
+			return true;
+		}
+
+	}
+
 	// 点击播放列表里的歌曲，跳转播放页面
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
@@ -303,20 +317,17 @@ public class LocalActivity extends ListFragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.i("LocalActivity", "LocalActivity is isVisible" + isVisible());
+		String listname = spinner.getSelectedItem().toString();
 		if (isVisible()) {
-			String listname = spinner.getSelectedItem().toString();
+			if (!listname.equals(getString(R.string.playlist_default))
+					&&! listname
+							.equals(getString(R.string.playlist_default_last))) {
 			// 当选择删除当前播放列表的时候，删除数据库中的对应值，刷新该activity
 			switch (item.getItemId()) {
 			case 2:
-				// 开线程删除播放李彪
-				if(listname.equals(getString(R.string.playlist_default))||listname.equals(getString(R.string.playlist_default_last))){
-				Thread3 thread3 = new Thread3(listname);
-				thread3.start();
-				}else {
-					Message msg = new Message();
-					msg.what = 5;
-					myhandler.sendMessage(msg);
-				}
+				// 开线程删除播放列表
+					Thread3 thread3 = new Thread3(listname);
+					thread3.start();
 				break;
 			case 1:
 				// 进入选择添加mp3的activity
@@ -325,11 +336,14 @@ public class LocalActivity extends ListFragment {
 				intent.putExtra("listname", listname);
 				startActivity(intent);
 				break;
+			} }else {
+				Message msg = new Message();
+				msg.what = 5;
+				myhandler.sendMessage(msg);
+				return false;
 			}
-
-			return super.onOptionsItemSelected(item);
-		} else
-			return false;
+		} 
+		return false;
 	}
 
 	// 监听扫描sd卡mp3文件信息广播

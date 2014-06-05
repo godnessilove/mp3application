@@ -83,6 +83,7 @@ public class NewPlaylistDialog extends DialogFragment {
 								} else if (!list.contains(text)) {
 									Intent intent = new Intent();
 									intent.putExtra("listname", text);
+									intent.putExtra("mode", 1);
 									intent.setClass(getActivity(),
 											ChooseMp3Activity.class);
 									startActivity(intent);

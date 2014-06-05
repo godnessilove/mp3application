@@ -18,11 +18,11 @@
     
     <!-- 本地列表标签与菜单  -->
     <string name="tab222_name">本地列表</string>
-	<string name="tab222_menu_1">更新播放列表</string>
+	<string name="tab222_menu_1">添加删除歌曲</string>
 	<string name="tab222_menu_2">刪除目前的播放列表</string>
 	
 	
-	<string name="deleteFalse">目前的播放列表不可以刪除</string>
+	<string name="deleteFalse">目前的播放列表不可以操作</string>
 	<string name="updateOk">成功更新列表</string>
 	
 	<string name="tab000_menu">退出</string>
@@ -41,11 +41,16 @@
 	
 	<!-- ChooseMp3Activity中的添加按钮 、全选/反选按钮,默认值-->
 	<string name="addbutton">添加</string>
+	<string name="deletebutton">删除</string>
 	<string name="choose">全选</string>
 	<string name="unchoose">反选</string>
 	<string name="addbuttondef">添加(0)</string>
-	<!-- ChooseMp3Activity新增播放列表失败 -->
-	<string name="addfalse">插入歌曲进播放列表失败，新增失败</string>
+	<!-- ChooseMp3Activity新增失败 -->
+	<string name="addtrue">添加成功</string>
+	<string name="addfalse">添加失败</string>
+	<!-- ChooseMp3Activity删除失败 -->
+	<string name="deletetrue">删除成功</string>
+	<string name="deletefalse">删除失败</string>
 	
 	<!-- 新增播放列表通知栏确认、取消按钮 -->
 	<string name="dialogpositive">确定</string>
