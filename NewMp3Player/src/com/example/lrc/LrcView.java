@@ -1,6 +1,9 @@
 package com.example.lrc;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.example.newmp3player.R;
 
@@ -16,6 +19,9 @@ public class LrcView extends TextView {
 	private Paint mPaint;
 	private HashMap<Long, String> lrcs;
 	public int index = 0;
+	private int max;
+	private int textsize;
+	private int midtextsize;
 	private Long[] times;
 	private String text;
 	public float mTouchHistoryY;
@@ -39,6 +45,12 @@ public class LrcView extends TextView {
 
 	public void setLrcs(HashMap<Long, String> lrcs) {
 		this.lrcs = lrcs;
+		if (lrcs != null) {
+			this.max = getMaxLength(lrcs);
+			textsize = getWidth() / max < 30 ? 30 : getWidth() / max;
+			midtextsize = getWidth() / max + 10 < 40 ? 40 : getWidth() / max
+					+ 10;
+		}
 	}
 
 	public void setIndex(int index) {
@@ -56,7 +68,7 @@ public class LrcView extends TextView {
 		mPaint = new Paint();
 		// 设置Paint为无锯齿
 		mPaint.setAntiAlias(true);
-		// 字体22
+		// 设置字体大小
 		mPaint.setTextSize(getHeight() / 9);
 		// 颜色白色
 		mPaint.setColor(Color.WHITE);
@@ -67,6 +79,21 @@ public class LrcView extends TextView {
 
 	}
 
+	public static int getMaxLength(HashMap<Long, String> lrcs) {
+		int max = 0;
+		if (lrcs != null) {
+			Collection<String> temp = lrcs.values();
+			for (Iterator<String> iterator = temp.iterator(); iterator
+					.hasNext();) {
+				String string = (String) iterator.next();
+				if (max <= string.length()) {
+					max = string.length();
+				}
+			}
+		}
+		return max;
+	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
@@ -75,16 +102,16 @@ public class LrcView extends TextView {
 		if (lrcs != null && times != null) {
 			// 中间当前歌词
 			mPaint.setAlpha(255);
-			mPaint.setTextSize(26);
+			mPaint.setTextSize(midtextsize);
 			text = lrcs.get(times[index]);
 			canvas.drawText(text, allwidth / 2, allheight / 2, mPaint);
 			// 中间向上写歌词
 
-			mPaint.setTextSize(20);
+			mPaint.setTextSize(textsize);
 			int newheight = allheight / 2;
 			for (int i = index - 1; i > 0; i--) {
 				text = lrcs.get(times[i]);
-				newheight -= DY;
+				newheight -= (textsize + DY);
 				if (newheight > 0) {
 					float alpha = (float) 255 / allheight * newheight;
 					mPaint.setAlpha((int) alpha + 10);
@@ -95,7 +122,7 @@ public class LrcView extends TextView {
 			newheight = allheight / 2;
 			for (int i = index + 1; i < times.length - 1; i++) {
 				text = lrcs.get(times[i]);
-				newheight += DY;
+				newheight += (textsize + DY);
 				if (newheight < allheight) {
 					float alpha = (float) 255 / (allheight)
 							* (allheight - newheight);
