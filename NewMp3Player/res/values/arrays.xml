@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="size_set">
+        <item>不做限制</item>
+        <item>500KB</item>
+        <item>1MB</item>
+        <item>5MB</item>
+    </string-array>
+    <string-array name="size_set_value">
+        <item>0</item>
+        <item>500</item>
+        <item>1024</item>
+        <item>5120</item>
+    </string-array>
+    <string-array name="timer">
+        <item>未定时</item>
+        <item>1分钟</item>
+        <item>2分钟</item>
+        <item>30分钟</item>
+        <item>40分钟</item>
+        <item>50分钟</item>
+        <item>60分钟</item>
+    </string-array>
+    <string-array name="timer_num">
+        <item>0</item>
+        <item>6</item>
+        <item>120</item>
+        <item>1800</item>
+        <item>2400</item>
+        <item>3000</item>
+        <item>3600</item>
+    </string-array>
+
+</resources>

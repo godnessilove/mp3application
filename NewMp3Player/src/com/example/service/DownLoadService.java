@@ -23,8 +23,8 @@ public class DownLoadService extends Service {
 	private String downlrcpath = "lrc";
 	private HttpDownLoad hdl;
 	private int mp3_resault;
-	//private int lrc_resault;
-	//最新的startId，为了保证可以正确关闭service
+	// private int lrc_resault;
+	// 最新的startId，为了保证可以正确关闭service
 	private int newid;
 
 	private DownMp3State downmp3state;
@@ -56,18 +56,29 @@ public class DownLoadService extends Service {
 		Mp3Info mp3info;
 		newid = startId;
 		if (msg.equals("NEWCREATE")) {
-			//最多同时下载3个mp3
+			// 最多同时下载3个mp3
 			if (downmp3state.getMap().size() < 3) {
 				// newid表示最近一次的startId,为了可以正确结束service而不会结束没有完成的下载
-				Log.i("DownLoadService", "newid is " + newid);
 				mp3info = (Mp3Info) intent.getSerializableExtra("mp3info");
 				// 加判断，如果正在下载则不进行以下操作
-				// 启动下载线程
-				DownLoad download = new DownLoad(mp3info);
-				download.start();
+				if (downmp3state.getDowning().contains(mp3info.getMp3name())) {
+					Toast.makeText(
+							getApplicationContext(),
+							mp3info.getMp3name()
+									+ getString(R.string.downNotifiTextIng),
+							Toast.LENGTH_SHORT).show();
+					stopService(0);
+				} else {
+					// 启动下载线程
+					DownLoad download = new DownLoad(mp3info);
+					download.start();
+					// 只要开始下载了，就记录该名字的mp3正在下载
+					downmp3state.getDowning().add(mp3info.getMp3name());
+				}
 			} else {
-				Toast.makeText(getApplicationContext(), "为了保证速度与性能，最多同时下载三个",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.downNotifithree), Toast.LENGTH_SHORT)
+						.show();
 				stopService(0);
 			}
 		} else if (msg.equals("DELETE")) {
@@ -121,31 +132,33 @@ public class DownLoadService extends Service {
 			updateinfo.start();
 
 			// 先下载歌词(后下载歌词会造成mp3先下载完成，下载状态会被删除，导致歌词下载中断)，不提示下载歌词，让用户感觉不到下载歌词
-			hdl.downFile(https, downlrcpath, mp3info.getMp3name()
-					.replace("mp3", "lrc"), threadid);
+			hdl.downFile(https, downlrcpath,
+					mp3info.getMp3name().replace("mp3", "lrc"), threadid);
 			// 下载mp3
 			mp3_resault = hdl.downFile(https, downmp3path,
 					mp3info.getMp3name(), threadid);
 			Log.i("DownLoadService", "mp3_resault is" + mp3_resault);
 			// mp3_resault：-1下載錯誤，2文件已存在，0正确下载
 			downmp3state.getMap().put(threadid, mp3_resault);
+			// 不管下载成功与否，都删除正在下载记录
+			downmp3state.getDowning().remove(mp3info.getMp3name());
 		}
 	}
 
 	/**
 	 * 判断如果下载都完成了，则停止service
+	 * 
 	 * @param threadid
 	 */
-	public synchronized  void stopService(int threadid) {
-		if(threadid != 0){
-		downmp3state.getMap().remove(threadid);
+	public void stopService(int threadid) {
+		Log.i("", "remove threadid is " + threadid);
+		if (threadid != 0) {
+			downmp3state.getMap().remove(threadid);
 		}
 		if (downmp3state.getMap().size() == 0) {
 			stopSelf(newid);
-			}
+		}
 	}
-	
-	
 
 	class Updateinfo extends Thread {
 		private int percentage = 0;
@@ -201,8 +214,8 @@ public class DownLoadService extends Service {
 						// stopSelf(newid);
 						notificaition.updateNotification(threadid, percentage,
 								1);
-						stopService(threadid);
-						break;
+						//stopService(threadid);
+						//break;
 					}
 				}
 

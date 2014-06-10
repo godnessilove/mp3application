@@ -228,7 +228,7 @@ public class LocalActivity extends ListFragment {
 				adapter = new SimpleCursorAdapter(getActivity(),
 						R.layout.mp3info_item, cursor, from, to, 0);
 				setListAdapter(adapter);
-				//添加item长按事件
+				// 添加item长按事件
 				getListView().setOnItemLongClickListener(new onLongClickList());
 				break;
 			// 提示删除播放列表是否成功，并刷新
@@ -320,29 +320,30 @@ public class LocalActivity extends ListFragment {
 		String listname = spinner.getSelectedItem().toString();
 		if (isVisible()) {
 			if (!listname.equals(getString(R.string.playlist_default))
-					&&! listname
+					&& !listname
 							.equals(getString(R.string.playlist_default_last))) {
-			// 当选择删除当前播放列表的时候，删除数据库中的对应值，刷新该activity
-			switch (item.getItemId()) {
-			case 2:
-				// 开线程删除播放列表
+				// 当选择删除当前播放列表的时候，删除数据库中的对应值，刷新该activity
+				switch (item.getItemId()) {
+				case 2:
+					// 开线程删除播放列表
 					Thread3 thread3 = new Thread3(listname);
 					thread3.start();
-				break;
-			case 1:
-				// 进入选择添加mp3的activity
-				Intent intent = new Intent();
-				intent.setClass(getActivity(), ChooseMp3Activity.class);
-				intent.putExtra("listname", listname);
-				startActivity(intent);
-				break;
-			} }else {
+					break;
+				case 1:
+					// 进入选择添加mp3的activity
+					Intent intent = new Intent();
+					intent.setClass(getActivity(), ChooseMp3Activity.class);
+					intent.putExtra("listname", listname);
+					startActivity(intent);
+					break;
+				}
+			} else {
 				Message msg = new Message();
 				msg.what = 5;
 				myhandler.sendMessage(msg);
 				return false;
 			}
-		} 
+		}
 		return false;
 	}
 
@@ -374,16 +375,19 @@ public class LocalActivity extends ListFragment {
 		Log.i("LocalActivity", "LocalActivity onPause");
 		super.onPause();
 		// activiti暂停时保存当前选择的播放列表
-		SharedPreferences.Editor ed = mPrefs.edit();
-		if (!selection.equals(getString(R.string.playlist_default_last))) {
-			ed.putString("spinner_value", selection);
-			Log.i("LocalActivity ", "SharedPreferences is" + selection);
-		} else {
-			ed.putString("spinner_value", getString(R.string.playlist_default));
-			Log.i("LocalActivity ", "SharedPreferences is"
-					+ getString(R.string.playlist_default));
+		if (selection != null) {
+			SharedPreferences.Editor ed = mPrefs.edit();
+			if (!selection.equals(getString(R.string.playlist_default_last))) {
+				ed.putString("spinner_value", selection);
+				Log.i("LocalActivity ", "SharedPreferences is" + selection);
+			} else {
+				ed.putString("spinner_value",
+						getString(R.string.playlist_default));
+				Log.i("LocalActivity ", "SharedPreferences is"
+						+ getString(R.string.playlist_default));
+			}
+			ed.commit();
 		}
-		ed.commit();
 	}
 
 	@Override

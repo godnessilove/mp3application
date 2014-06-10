@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     
     <!-- 远程更新的网址 -->
-    <string name="https">http://192.168.2.7:8080/mp3/</string>
+    <string name="https">http://192.168.2.3:8080/mp3/</string>
     
     <string name="TabPlay">播放</string>
     <string name="TabPlayList">列表</string>
@@ -25,6 +25,7 @@
 	<string name="deleteFalse">目前的播放列表不可以操作</string>
 	<string name="updateOk">成功更新列表</string>
 	
+	<string name="tab_set">设置</string>
 	<string name="tab000_menu">退出</string>
 	
 	<!-- 服务器列表标签与菜单-->
@@ -91,6 +92,8 @@
 	<string name="downNotifiTextOK">下载完成</string>
 	<string name="downNotifiTextExist">已经下载</string>
 	<string name="downNotifiTextNegative">取消下载</string>
+	<string name="downNotifithree">为了保证速度与性能，最多同时下载三个</string>
+	
 	
 	
 	<string name="pull_to_refresh">下拉可以刷新</string>
@@ -101,5 +104,7 @@
 	<string name="updated_just_now">刚刚更新</string>
 	<string name="time_error">时间有问题</string>
 	
-	
+	<string name="scanfilter">扫描过滤</string>
+	<string name="scansize">选择过滤音乐大小</string>
+	<string name="choose_timer">choose_timer</string>
 </resources>

@@ -15,7 +15,7 @@
         android:layout_height="48dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@android:drawable/arrow_down_float" />
+        android:src="@drawable/ic_menu_party_shuffle" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -83,8 +83,8 @@
 
     <ImageButton
         android:id="@+id/imageBUtton4"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
         android:layout_alignBottom="@+id/linearLayout1"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/linearLayout1"

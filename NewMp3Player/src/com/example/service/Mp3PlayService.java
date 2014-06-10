@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.example.newmp3player.LocalActivity;
+import com.example.newmp3player.MainActivity;
 import com.example.newmp3player.R;
+import com.example.newmp3player.TabPlayFragment;
 import com.example.notification.Mp3Notification;
 import com.example.sqlite.DProvider;
 
@@ -32,7 +34,7 @@ public class Mp3PlayService extends Service implements
 	private String mp3name = null;
 	private MediaPlayer m = null;
 	private int threadid;
-	//private int startId;
+	// private int startId;
 	// 默认刚开始的时候是没有获得焦点的
 	private int audiofocus = AudioManager.AUDIOFOCUS_REQUEST_FAILED;
 	private Boolean ispause = false;
@@ -45,6 +47,7 @@ public class Mp3PlayService extends Service implements
 	// 更新mp3activity显示
 	public static final String UPDATE_ACTION = "com.example.service.UPDATE_ACTION";
 	public static final String STOP_ACTION = "com.example.service.STOP_ACTION";
+	public static final String TIME_OUT_ACTION = "com.example.service.TIME_OUT_ACTION";
 	private boolean mbind = false;
 	private String playmode;
 	private int mDuration;
@@ -114,6 +117,7 @@ public class Mp3PlayService extends Service implements
 			stopreceiver = new MusicIntentReceiver();
 			IntentFilter filter = new IntentFilter(
 					android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+			filter.addAction(TIME_OUT_ACTION);
 			this.registerReceiver(stopreceiver, filter);
 		}
 		Log.i(tag, "创建mp3service,注册noisy广播");
@@ -153,9 +157,9 @@ public class Mp3PlayService extends Service implements
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		threadid = Thread.currentThread().hashCode();
 		msg = intent.getStringExtra("msg");
-		//this.startId = startId;
-		//放在前台，手机长时间休眠时，不会被kill
-		notification.notificationstartForeground(Mp3PlayService.this,threadid);
+		// this.startId = startId;
+		// 放在前台，手机长时间休眠时，不会被kill
+		notification.notificationstartForeground(Mp3PlayService.this, threadid);
 		Log.i(tag, "onStartCommand" + msg);
 		if (msg.equals("START")) {
 			// 如果沒有播放器
@@ -171,6 +175,10 @@ public class Mp3PlayService extends Service implements
 			}
 			// 点击播放列表切换歌曲的时候
 			else if (mp3name.equals(intent.getStringExtra("mp3name")) == false) {
+				//切换歌曲.肯定是新的歌曲开头开始播放
+				SharedPreferences.Editor ed = mpfres.edit();
+				ed.putInt("mDuration", 0);
+				ed.commit();
 				mp3path = intent.getStringExtra("mp3path");
 				mp3name = intent.getStringExtra("mp3name");
 				mp3listname = intent.getStringExtra("mp3listname");
@@ -204,8 +212,8 @@ public class Mp3PlayService extends Service implements
 				updateActivity(mp3name, mp3path);
 			}
 		}
-		
-		return START_STICKY;
+
+		return START_NOT_STICKY;
 	}
 
 	/**
@@ -377,16 +385,17 @@ public class Mp3PlayService extends Service implements
 			audiomanager.abandonAudioFocus(listener);
 		}
 		// 删除通知栏
-		//notification.deleteNotifi(threadid);
+		// notification.deleteNotifi(threadid);
 		stopForeground(true);
-		if(notification == null){
-		notification = null;
+		if (notification != null) {
+			notification = null;
 		}
 		// 注销广播
 		if (stopreceiver != null) {
 			this.unregisterReceiver(stopreceiver);
 			Log.i(this.toString(), "stopreceiver 解绑");
 		}
+
 		Log.i(this.toString(), "Mp3PlayService 已杀");
 		super.onDestroy();
 	}
@@ -406,12 +415,12 @@ public class Mp3PlayService extends Service implements
 		m = null;
 		// stopForeground(true);
 		// manager.cancelAll();
-		//notification.deleteNotifi(threadid);
-		//notification = null;
+		// notification.deleteNotifi(threadid);
+		// notification = null;
 		stopForeground(true);
-		if(notification == null){
+		if (notification == null) {
 			notification = null;
-			}
+		}
 		// 放弃音频焦点
 		audiomanager.abandonAudioFocus(listener);
 		return true;
@@ -495,9 +504,11 @@ public class Mp3PlayService extends Service implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// 例如当耳机拔出的时候，停止播放
+			// 例如当耳机拔出的时候,和定时到点的时候，停止播放
 			if (intent.getAction().equals(
-					android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+					android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+					|| intent.getAction()
+							.equals(Mp3PlayService.TIME_OUT_ACTION)) {
 				Log.i(tag, "耳机拔出");
 				Log.i(tag, "mbind is " + mbind);
 				if (mbind) {

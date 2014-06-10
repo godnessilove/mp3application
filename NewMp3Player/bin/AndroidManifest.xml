@@ -29,22 +29,38 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name="com.example.newmp3player.ChooseMp3Activity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:finishOnTaskLaunch="true" >
+            android:finishOnTaskLaunch="true"
+            android:parentActivityName="com.example.newmp3player.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.newmp3player.MainActivity" />
         </activity>
+        
+        <activity
+            android:name="com.example.newmp3player.PreferencesActi"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:finishOnTaskLaunch="true"
+            android:parentActivityName="com.example.newmp3player.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.newmp3player.MainActivity" />
+        </activity>
+        
 
         <service android:name="com.example.service.DownLoadService" >
         </service>
         <service android:name="com.example.service.Mp3PlayService" >
         </service>
-
-<!--         <receiver android:name="com.example.receiver.MusicIntentReceiver" >
-            <intent-filter>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-            </intent-filter>
-        </receiver> -->
+         <service android:name="com.example.service.TimerService" >
+        </service>
+  
+        
     </application>
 
 </manifest>

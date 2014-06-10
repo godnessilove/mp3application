@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/scanfilter" >
+        <ListPreference
+            android:dialogTitle="@string/scansize"
+            android:entries="@array/size_set"
+            android:entryValues="@array/size_set_value"
+            android:key="choose_size"
+            android:title="@string/scansize" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="定时关闭" >
+       <!--  <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="choose_timer"
+            android:selectable="false"
+            android:summaryOff="不可以选择"
+            android:summaryOn="可以选择"
+            android:title="是否可选择定时关闭" /> 
+            
+             android:dependency="@string/choose_timer"-->
+
+        <ListPreference
+           
+            android:dialogTitle="请选择定时关闭时间"
+            android:entries="@array/timer"
+            android:entryValues="@array/timer_num"
+            android:key="timer"
+            android:negativeButtonText="取消"
+            android:title="定时关闭时间" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

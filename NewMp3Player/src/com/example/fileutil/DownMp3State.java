@@ -2,17 +2,30 @@ package com.example.fileutil;
 
 import android.annotation.SuppressLint;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @SuppressLint("UseSparseArrays")
 public class DownMp3State {
 	private HashMap<Integer, Integer> map;
 	private static DownMp3State Instance = null;
+	private ArrayList<String> downing;
+
+	public ArrayList<String> getDowning() {
+		return downing;
+	}
+
+	public void setDowning(ArrayList<String> downing) {
+		this.downing = downing;
+	}
 
 	private DownMp3State() {
 		super();
 		if (map == null) {
 			this.map = new HashMap<Integer, Integer>();
+		}
+		if(downing == null ){
+			this.downing = new ArrayList<String>();
 		}
 	}
 
@@ -35,6 +48,5 @@ public class DownMp3State {
 	public String toString() {
 		return "DownMp3State [map=" + map + "]";
 	}
-	
 
 }

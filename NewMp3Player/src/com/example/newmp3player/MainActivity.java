@@ -11,6 +11,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -35,7 +36,6 @@ public class MainActivity extends FragmentActivity implements
 		// 初始化全部播放列表
 		InitSplite init = new InitSplite();
 		init.start();
-		
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 
 		final ActionBar bar = getActionBar();
@@ -62,6 +62,21 @@ public class MainActivity extends FragmentActivity implements
 			bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
 	}
+
+	
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		//退出
+        if ((Intent.FLAG_ACTIVITY_CLEAR_TOP & intent.getFlags()) != 0) {
+        	Log.i("","onNewIntent is finish");
+               finish();
+        }
+
+	}
+	
+
 
 	private class InitSplite extends Thread{
 
@@ -93,6 +108,7 @@ public class MainActivity extends FragmentActivity implements
 		}else if (fag == 0){
 			menu.clear();
 			menu.add(0, 1, 0, getString(R.string.tab000_menu));
+			menu.add(0, 2, 0, getString(R.string.tab_set));
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}

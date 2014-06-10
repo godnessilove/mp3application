@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -41,6 +42,8 @@ public class DProvider {
 	private String DEFAULT_LAST;
 	private String TABLE_NAME;
 	private String MP3_ID;
+	private SharedPreferences sh;
+	private long minsize;
 
 	// private String TAG = "DProvider";
 
@@ -166,6 +169,9 @@ public class DProvider {
 	}
 
 	public void InitDate() {
+		//获取设置里面设置的歌曲最小是多少，用来筛选
+		sh = PreferenceManager.getDefaultSharedPreferences(this.context);
+		minsize = Integer.valueOf(sh.getString("choose_size", "0")) * 1024;
 		Cursor cursor = null;
 		Cursor result = null;
 		// 当表里不存在的时候，增加一条mp3记录
@@ -198,48 +204,55 @@ public class DProvider {
 							MediaStore.Audio.Media.SIZE }, null, null,
 					MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 			while (cursor.moveToNext()) {
-				// 歌曲名称
-				String tilte = cursor.getString(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
-				// 歌曲id
-				int id = cursor.getInt(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
-				// 歌手名
-				String artist = cursor.getString(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
-				// 歌曲专辑名
-				String album = cursor.getString(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
-				// 歌曲专辑Id
-				int album_id = cursor
-						.getInt(cursor
-								.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
-				// 歌曲缩微图
-				String thumb = querythumb(album_id);
-				// String thumb = getAlbumArt(album_id);
-				// 歌曲路径
-				String url = cursor.getString(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
-				// 歌曲的总播放时长
-				int duration = cursor
-						.getInt(cursor
-								.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
 				// 歌曲文件大小
 				long size = cursor.getLong(cursor
 						.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE));
-				// 歌词路径
-				String lrcpath = fileUtil.getLrcPath(tilte, "lrc");
-				result = db.rawQuery(sql1, new String[] { tilte });
-				if (result.getCount() == 0) {
-					db.execSQL(sql, new Object[] { null, id, tilte, thumb,
-							artist, album, album_id, url, duration, size,
-							lrcpath, 3 });
-				} else if ((result.getCount() == 1)) {
-					db.execSQL(sql2, new String[] { id + "", artist, album,
-							album_id + "", url, duration + "", size + "",
-							thumb, lrcpath, tilte });
+				//根据最小size筛选合适的到local表中
+				if (size > minsize) {
+					// 歌曲名称
+					String tilte = cursor
+							.getString(cursor
+									.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
+					// 歌曲id
+					int id = cursor.getInt(cursor
+							.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+					// 歌手名
+					String artist = cursor
+							.getString(cursor
+									.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
+					// 歌曲专辑名
+					String album = cursor
+							.getString(cursor
+									.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
+					// 歌曲专辑Id
+					int album_id = cursor
+							.getInt(cursor
+									.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+					// 歌曲缩微图
+					String thumb = querythumb(album_id);
+					// String thumb = getAlbumArt(album_id);
+					// 歌曲路径
+					String url = cursor
+							.getString(cursor
+									.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+					// 歌曲的总播放时长
+					int duration = cursor
+							.getInt(cursor
+									.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+					// 歌词路径
+					String lrcpath = fileUtil.getLrcPath(tilte, "lrc");
+					result = db.rawQuery(sql1, new String[] { tilte });
+					if (result.getCount() == 0) {
+						db.execSQL(sql, new Object[] { null, id, tilte, thumb,
+								artist, album, album_id, url, duration, size,
+								lrcpath, 3 });
+					} else if ((result.getCount() == 1)) {
+						db.execSQL(sql2, new String[] { id + "", artist, album,
+								album_id + "", url, duration + "", size + "",
+								thumb, lrcpath, tilte });
+					}
+					result.close();
 				}
-				result.close();
 			}
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -255,37 +268,6 @@ public class DProvider {
 		}
 	}
 
-	/**
-	 * 每次的初始化全部歌曲播放列表插入数据
-	 * 
-	 * @param tablename
-	 *            全部歌曲表名
-	 * @param locallist
-	 *            本地mp3列表
-	 */
-	/*
-	 * public synchronized void addDate(String tablename, List<Mp3Info>
-	 * locallist) { Cursor result = null; // 当表里不存在的时候，增加一条mp3记录 String sql =
-	 * "insert into " + tablename + " values(?,?,?,?,?,?) "; //
-	 * 当前表里是否存在这条MP3记录(状态可以是2也可以是3) String sql1 = "select * from " + tablename +
-	 * " where " + this.context.getString(R.string.MP3NAME) + " = ? "; //
-	 * 如果当前有这条记录，不管状态是几，都置成3，表示Mp3在本地了 String sql2 = "update " + tablename +
-	 * " set state = '3' where " + this.context.getString(R.string.MP3NAME) +
-	 * " = ? "; // 将所有mp3置成状态2,表示曾经存在过，现在没了 String sql3 = "update " + tablename
-	 * + " set state = '2' "; ; // 开始事务 db.beginTransaction(); try {
-	 * db.execSQL(sql3); for (Mp3Info mp3Info : locallist) { result =
-	 * db.rawQuery(sql1, new String[] { mp3Info.getMp3name() }); if
-	 * (result.getCount() == 0) { String mp3path =
-	 * FileUtil.getMp3Path(mp3Info.getMp3name(), "mp3"); String lrcpath =
-	 * FileUtil.getMp3Path(mp3Info.getMp3name() .replace(".mp3", ".lrc"),
-	 * "lrc"); db.execSQL(sql, new Object[] { null, mp3Info.getMp3name(),
-	 * mp3Info.getMp3size(), mp3path, lrcpath, 3 }); } else if
-	 * ((result.getCount() == 1)) { db.execSQL(sql2, new String[] {
-	 * mp3Info.getMp3name() }); } result.close(); }
-	 * db.setTransactionSuccessful(); } catch (Exception e) {
-	 * e.printStackTrace(); } finally { if (result != null &&
-	 * !result.isClosed()) { result.close(); } db.endTransaction(); } }
-	 */
 
 	/**
 	 * 新建播放列表,插入数据
@@ -386,7 +368,7 @@ public class DProvider {
 		Cursor result = db.rawQuery(sql, null);
 		return result;
 	}
-	
+
 	/**
 	 * 查询指定播放列表的歌曲列表
 	 * 

@@ -24,6 +24,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -96,7 +97,18 @@ public class TabPlayFragment extends Fragment {
 		if (isVisible()) {
 			switch (item.getItemId()) {
 			case 1:
+				Intent intent1 = new Intent(getActivity(), PreferencesActi.class);
+				intent1.putExtra("flag", "end");
+				getActivity().startService(intent1);
+				SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getActivity());
+				SharedPreferences.Editor ed = sh.edit();
+				ed.putString("timer", "0");
+				ed.commit();
 				StopPlay();
+			case 2:
+				Intent intent = new Intent();
+				intent.setClass(getActivity(), PreferencesActi.class);
+				startActivity(intent);
 			}
 		}
 		return super.onOptionsItemSelected(item);
@@ -269,7 +281,6 @@ public class TabPlayFragment extends Fragment {
 					filter);
 		}
 
-
 		// 自动播放
 		if (!ispause) {
 			AutoPlay();
@@ -292,11 +303,11 @@ public class TabPlayFragment extends Fragment {
 		Log.i("TabPlayFragment", "TabPlayFragment is onstop");
 		// 点其他歌曲播放的时候，删掉前一个歌词的线程
 		handler.removeCallbacksAndMessages(null);
-		// 注销广播
+		/*// 注销广播
 		if (receiver != null) {
 			getActivity().unregisterReceiver(receiver);
 			receiver = null;
-		}
+		}*/
 		// 解綁service
 		if (mp3serivce != null) {
 			getActivity().unbindService(conn);
@@ -462,8 +473,10 @@ public class TabPlayFragment extends Fragment {
 
 	public void StopPlay() {
 		// 看不见界面，解绑service，
+		if(mp3serivce!= null){
 		getActivity().unbindService(conn);
 		mp3serivce = null;
+		}
 		Intent intent = new Intent();
 		intent.setClass(TabPlayFragment.this.getActivity(),
 				Mp3PlayService.class);
@@ -471,7 +484,8 @@ public class TabPlayFragment extends Fragment {
 		getActivity().startService(intent);
 		ispause = true;
 		handler.post(update);
-		getActivity().finish();
+		//getActivity().finish();
+		System.exit(0);
 	}
 
 	// 更新当天播放Mp3名字
@@ -522,6 +536,8 @@ public class TabPlayFragment extends Fragment {
 					mDuration = mp3serivce.getPlayTime();
 				}
 				kan(mDuration);
+			} else {
+				lrctext.invalidate();
 			}
 		}
 	};
@@ -602,8 +618,6 @@ public class TabPlayFragment extends Fragment {
 		}
 	}
 
-	
-
 	@Override
 	public void onDestroy() {
 		Log.i("TabPlayFragment", "TabPlayFragment ondestroy");
@@ -612,8 +626,11 @@ public class TabPlayFragment extends Fragment {
 			getActivity().unregisterReceiver(receiver);
 			receiver = null;
 		}
-		
-
+		// 解綁service
+		if (mp3serivce != null) {
+			getActivity().unbindService(conn);
+			mp3serivce = null;
+		}
 		handler.removeCallbacksAndMessages(null);
 		super.onDestroy();
 	}
