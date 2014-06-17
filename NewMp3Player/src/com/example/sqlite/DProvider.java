@@ -268,6 +268,10 @@ public class DProvider {
 		}
 	}
 
+	public void deleteFile(int id){
+		String sql = "update " + TABLENAME + " set " + STATE + " =  '2'  where _id = " + id ; 
+		db.execSQL(sql);
+	}
 
 	/**
 	 * 新建播放列表,插入数据

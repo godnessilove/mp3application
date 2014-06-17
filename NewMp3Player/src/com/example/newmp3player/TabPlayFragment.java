@@ -1,8 +1,11 @@
 package com.example.newmp3player;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import com.example.lrc.LrcProcess;
 import com.example.lrc.LrcView;
@@ -26,7 +29,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +41,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 @SuppressLint("NewApi")
 public class TabPlayFragment extends Fragment {
-	private String tag = "TabPlayFragment";
+	// private String tag = "TabPlayFragment";
 
 	private ImageButton button1 = null;
 	private ImageButton button2 = null;
@@ -78,7 +80,6 @@ public class TabPlayFragment extends Fragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i("TabPlayFragment", "TabPlayFragment oncreate");
 		setHasOptionsMenu(true);
 		super.onCreate(savedInstanceState);
 		mPrefs = getActivity().getSharedPreferences(LocalActivity.MP3_SHARED,
@@ -88,7 +89,6 @@ public class TabPlayFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		Log.i(tag, "TabPlayFragment is onCreateView");
 		return inflater.inflate(R.layout.playfragment, container, false);
 	}
 
@@ -97,10 +97,12 @@ public class TabPlayFragment extends Fragment {
 		if (isVisible()) {
 			switch (item.getItemId()) {
 			case 1:
-				Intent intent1 = new Intent(getActivity(), PreferencesActi.class);
+				Intent intent1 = new Intent(getActivity(),
+						PreferencesActi.class);
 				intent1.putExtra("flag", "end");
 				getActivity().startService(intent1);
-				SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getActivity());
+				SharedPreferences sh = PreferenceManager
+						.getDefaultSharedPreferences(getActivity());
 				SharedPreferences.Editor ed = sh.edit();
 				ed.putString("timer", "0");
 				ed.commit();
@@ -117,14 +119,12 @@ public class TabPlayFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		Log.i(tag, "TabPlayFragment is onActivityCreated");
 		mp3serivce = null;
 
 		seekbar = (SeekBar) getActivity().findViewById(R.id.seekBar1);
 		button1 = (ImageButton) getActivity().findViewById(R.id.PlayButton);
 		button2 = (ImageButton) getActivity().findViewById(R.id.NextButton);
 		button3 = (ImageButton) getActivity().findViewById(R.id.PlayMode);
-		// textview = (TextView) getActivity().findViewById(R.id.Lyric);
 		lrctext = (LrcView) getActivity().findViewById(R.id.Lyric);
 		mp3nametext = (TextView) getActivity().findViewById(R.id.Mp3Name);
 		textDuration = (TextView) getActivity().findViewById(R.id.mDuration);
@@ -147,8 +147,6 @@ public class TabPlayFragment extends Fragment {
 		if (handler == null) {
 			handler = new Handler();
 		}
-		// 设置默认暂停图标，开始这个fragment就是自动播放mp3
-		// button1.setImageResource(android.R.drawable.ic_media_pause);
 
 	}
 
@@ -168,14 +166,11 @@ public class TabPlayFragment extends Fragment {
 
 	@Override
 	public void onPause() {
-		Log.i(tag, "TabPlayFragment is onPause");
 		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
-
-		Log.i(tag, "TabPlayFragment is onResume");
 		super.onResume();
 	}
 
@@ -211,7 +206,6 @@ public class TabPlayFragment extends Fragment {
 			mp3name = dprovider.querymp3def();
 		}
 		updateMp3info();
-
 		// 处理歌词
 		Lrc();
 		// 设置当前进度条
@@ -223,9 +217,11 @@ public class TabPlayFragment extends Fragment {
 			textDuration.setText(showTime(mDuration));
 			textAlltime.setText(showTime(alltime));
 		}
-		Log.i(tag, "上次退出时候播放的是：" + mp3name + ",正在播放的播放列表为：" + mp3listname);
 	}
 
+	/**
+	 * 换歌曲的时候更新mp3信息
+	 */
 	public void updateMp3info() {
 		DProvider dprovider = DProvider.getInstance(getActivity());
 		if (mp3name != null) {
@@ -244,14 +240,12 @@ public class TabPlayFragment extends Fragment {
 		// 连接时，获得mp3service的实例
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.i(tag, "onServiceConnected");
 			mp3serivce = ((Mp3PlayService.MyBinder) service).getService();
 		}
 
 		// 链接失败
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			Log.i(tag, "onServiceDisconnected");
 			mp3serivce = null;
 		}
 
@@ -261,9 +255,7 @@ public class TabPlayFragment extends Fragment {
 	public void onStart() {
 		view = getView();
 		InitPlayInfo();
-		Log.i("TabPlayFragment", "TabPlayFragment is  onStart");
 		ispause = mPrefs.getBoolean("ispause", true);
-		Log.i(tag, "onStart ispause is " + ispause);
 		// bindservice
 		if (mp3serivce == null) {
 			Intent intent1 = new Intent();
@@ -300,14 +292,12 @@ public class TabPlayFragment extends Fragment {
 
 	@Override
 	public void onStop() {
-		Log.i("TabPlayFragment", "TabPlayFragment is onstop");
 		// 点其他歌曲播放的时候，删掉前一个歌词的线程
 		handler.removeCallbacksAndMessages(null);
-		/*// 注销广播
-		if (receiver != null) {
-			getActivity().unregisterReceiver(receiver);
-			receiver = null;
-		}*/
+		/*
+		 * // 注销广播 if (receiver != null) {
+		 * getActivity().unregisterReceiver(receiver); receiver = null; }
+		 */
 		// 解綁service
 		if (mp3serivce != null) {
 			getActivity().unbindService(conn);
@@ -354,21 +344,52 @@ public class TabPlayFragment extends Fragment {
 		handler.post(r);
 	}
 
+	
+	/**
+	 * 解析歌词
+	 */
 	public void Lrc() {
 		LrcProcess lrcprocess = new LrcProcess();
 		if (lrcpath != null) {
 			lrcs = lrcprocess.process(lrcpath);
 			longtime = LrcProcess.GetAllTime(lrcs);
-			lrctext.setLrcs(lrcs);
+			int maxtime = getMaxLength(lrcs);
+			lrctext.setMax(maxtime);
 			lrctext.setTimes(longtime);
 		}
 	}
 
+	/**
+	 * 获取歌词中长度最长的长度
+	 * @param lrcs
+	 * @return
+	 */
+	public int getMaxLength(HashMap<Long, String> lrcs) {
+		int max = 15;
+		if (lrcs != null) {
+			Collection<String> temp = lrcs.values();
+			for (Iterator<String> iterator = temp.iterator(); iterator
+					.hasNext();) {
+				String string = (String) iterator.next();
+				if (max <= string.length()) {
+					max = string.length();
+				}
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * 将毫秒转换为00:00格式
+	 * 
+	 * @param duration
+	 * @return
+	 */
 	public String showTime(int duration) {
 		duration = duration / 1000;
 		int min = duration / 60;
 		int second = duration % 60;
-		return String.format("%02d:%02d", min, second);
+		return String.format(Locale.getDefault(), "%02d:%02d", min, second);
 	}
 
 	class seekBarListener implements OnSeekBarChangeListener {
@@ -378,8 +399,6 @@ public class TabPlayFragment extends Fragment {
 				boolean fromUser) {
 			if (fromUser) {
 				Float f = (float) progress / seekBar.getMax();
-				Log.i(tag, "max is " + seekBar.getMax() + ",progress is "
-						+ progress + ",f is " + f);
 				mp3serivce.setPro(f);
 				handler.removeCallbacks(r);
 				handler.post(r);
@@ -471,11 +490,14 @@ public class TabPlayFragment extends Fragment {
 
 	}
 
+	/**
+	 * 停止改activity並且停止mp3service，
+	 */
 	public void StopPlay() {
-		// 看不见界面，解绑service，
-		if(mp3serivce!= null){
-		getActivity().unbindService(conn);
-		mp3serivce = null;
+		// 当mp3service被绑定的时候，并且使用过startservice，如果要停止必须要先解绑
+		if (mp3serivce != null) {
+			getActivity().unbindService(conn);
+			mp3serivce = null;
 		}
 		Intent intent = new Intent();
 		intent.setClass(TabPlayFragment.this.getActivity(),
@@ -484,7 +506,7 @@ public class TabPlayFragment extends Fragment {
 		getActivity().startService(intent);
 		ispause = true;
 		handler.post(update);
-		//getActivity().finish();
+		// getActivity().finish();
 		System.exit(0);
 	}
 
@@ -612,7 +634,6 @@ public class TabPlayFragment extends Fragment {
 				handler.post(updateSeek);
 				handler.post(r);
 			} else if (arg1.getAction().equals(Mp3PlayService.STOP_ACTION)) {
-				Log.i(tag, "STOP_ACTION");
 				StopPlay();
 			}
 		}
@@ -620,8 +641,7 @@ public class TabPlayFragment extends Fragment {
 
 	@Override
 	public void onDestroy() {
-		Log.i("TabPlayFragment", "TabPlayFragment ondestroy");
-		// unbindService(conn);
+		// 注销广播接收
 		if (receiver != null) {
 			getActivity().unregisterReceiver(receiver);
 			receiver = null;

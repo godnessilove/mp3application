@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.example.newmp3player.LocalActivity;
-import com.example.newmp3player.MainActivity;
 import com.example.newmp3player.R;
-import com.example.newmp3player.TabPlayFragment;
 import com.example.notification.Mp3Notification;
 import com.example.sqlite.DProvider;
 

@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,7 +29,7 @@ import android.widget.TextView;
  */
 @SuppressLint("SimpleDateFormat")
 public class RefreshableView extends LinearLayout implements OnTouchListener {
-	private String tag = "RefreshableView";
+	//private String tag = "RefreshableView";
 	/**
 	 * 下拉状态
 	 */
@@ -177,6 +176,10 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	 */
 	private boolean ableToPull;
 
+	public void setAbleToPull(boolean ableToPull) {
+		this.ableToPull = ableToPull;
+	}
+
 	/**
 	 * 下拉刷新控件的构造函数，会在运行时动态添加一个下拉头的布局。
 	 * 
@@ -228,13 +231,13 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 				yDown = event.getRawY();
 				break;
 			case MotionEvent.ACTION_MOVE:
+				// 当前正处于下拉或释放状态，要让ListView失去焦点，否则被点击的那一项会一直处于选中状态
+				listView.setPressed(false);
+				listView.setFocusable(false);
+				listView.setFocusableInTouchMode(false);
+				
 				float yMove = event.getRawY();
 				int distance = (int) (yMove - yDown);
-				Log.i("onTouch", "yDown is " + yDown + ",yMove is " + yMove
-						+ ",distance is " + distance + ",touchSlop is "
-						+ touchSlop + ",headerLayoutParams.topMargin is "
-						+ headerLayoutParams.topMargin
-						+ ",hideHeaderHeight is " + hideHeaderHeight);
 				// 如果手指是下滑状态，并且下拉头是完全隐藏的，就屏蔽下拉事件
 				if (distance <= 0
 						&& headerLayoutParams.topMargin <= hideHeaderHeight) {
@@ -270,10 +273,6 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 			if (currentStatus == STATUS_PULL_TO_REFRESH
 					|| currentStatus == STATUS_RELEASE_TO_REFRESH) {
 				updateHeaderView();
-				// 当前正处于下拉或释放状态，要让ListView失去焦点，否则被点击的那一项会一直处于选中状态
-				listView.setPressed(false);
-				listView.setFocusable(false);
-				listView.setFocusableInTouchMode(false);
 				lastStatus = currentStatus;
 				// 当前正处于下拉或释放状态，通过返回true屏蔽掉ListView的滚动事件
 				return true;
@@ -399,7 +398,7 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	/**
 	 * 正在刷新的任务，在此任务中会去回调注册进来的下拉刷新监听器。
 	 * 
-	 * @author 
+	 * @author
 	 */
 	class RefreshingTask extends AsyncTask<Void, Integer, Void> {
 
@@ -435,7 +434,7 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	/**
 	 * 隐藏下拉头的任务，当未进行下拉刷新或下拉刷新完成后，此任务将会使下拉头重新隐藏。
 	 * 
-	 * @author 
+	 * @author
 	 */
 	class HideHeaderTask extends AsyncTask<Void, Integer, Integer> {
 
@@ -485,7 +484,7 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	/**
 	 * 下拉刷新的监听器，使用下拉刷新的地方应该注册此监听器来获取刷新回调。
 	 * 
-	 * @author 
+	 * @author
 	 */
 	public interface PullToRefreshListener {
 

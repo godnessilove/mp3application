@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,21 +19,26 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Button;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.adapter.mp3ListAdapter;
 import com.example.dialog.NewPlaylistDialog;
+import com.example.dialog.YesOrNoDialog;
 import com.example.sqlite.DProvider;
 import com.example.newmp3player.RefreshableView.PullToRefreshListener;
 
@@ -52,6 +59,11 @@ public class LocalActivity extends ListFragment {
 	private String tag = "LocalActivity";
 
 	private Receiver1 receiver1;
+	private PopupWindow popu;
+	private View parent;
+	private Button popubutton1;
+	private Button popubutton2;
+	private YesOrNoDialog yesnodialog;
 
 	public interface LocalFragmentListener {
 		public void onMp3Selected(Bundle bundle);
@@ -77,7 +89,6 @@ public class LocalActivity extends ListFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i("LocalActivity", "LocalActivity is onCreate");
 		// 设置菜单可用，使用的是mainactivity里设置的菜单
 		setHasOptionsMenu(true);
 		super.onCreate(savedInstanceState);
@@ -86,7 +97,6 @@ public class LocalActivity extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		Log.i("LocalActivity", "LocalActivity is onCreateView");
 		return inflater.inflate(R.layout.local_mp3_item, container, false);
 
 	}
@@ -121,6 +131,22 @@ public class LocalActivity extends ListFragment {
 												.getAbsolutePath())));
 			}
 		}, 0);
+
+		LayoutInflater mLayoutInflater = (LayoutInflater) getActivity()
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View popuview = mLayoutInflater.inflate(R.layout.popu, null, true);
+		popubutton1 = (Button) popuview.findViewById(R.id.button1);
+		popubutton2 = (Button) popuview.findViewById(R.id.button2);
+		popubutton1.setOnClickListener(new popubutton1());
+		popubutton2.setOnClickListener(new popubutton2());
+
+		popu = new PopupWindow(popuview, LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT, true);
+		// popu.setFocusable(true);
+		// popu.setOutsideTouchable(true);
+		popu.setBackgroundDrawable(new ColorDrawable(Color.argb(50, 52, 53, 55)));
+		parent = getActivity().findViewById(R.id.LinearLayout1);
+
 		// 同一个应用中使用的getpreferences
 		mPrefs = getActivity().getSharedPreferences(MP3_SHARED,
 				Context.MODE_PRIVATE);
@@ -133,11 +159,33 @@ public class LocalActivity extends ListFragment {
 		super.onStart();
 	}
 
+	class popubutton1 implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// 删除记录
+			yesnodialog.setMode(0);
+			yesnodialog.show(getFragmentManager(), "yesorno");
+			popu.dismiss();
+		}
+
+	}
+
+	class popubutton2 implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// 删除文件
+			yesnodialog.setMode(1);
+			yesnodialog.show(getFragmentManager(), "yesorno1");
+			popu.dismiss();
+		}
+
+	}
+
 	@Override
 	public void onResume() {
-		Log.i("LocalActivity", "LocalActivity is onResume");
 		super.onResume();
-		Log.i("onResume", "spinner " + spinner);
 		// 新线程访问数据库，用来获取全部播放列表
 		Thread1 thread1 = new Thread1();
 		thread1.start();
@@ -154,6 +202,14 @@ public class LocalActivity extends ListFragment {
 			myhandler.sendEmptyMessage(1);
 		}
 
+	}
+
+	/**
+	 * 其他fragment通知更新下拉列表
+	 */
+	public void updateList() {
+		Thread2 thread2 = new Thread2();
+		thread2.start();
 	}
 
 	// 查詢mp3列表
@@ -209,7 +265,6 @@ public class LocalActivity extends ListFragment {
 				// 获取保存的播放列表名
 				String selection1 = mPrefs.getString("spinner_value",
 						getString(R.string.playlist_default));
-				Log.i("LocalActivity", "保存的播放列表名为：" + selection1);
 				// 如果保存的播放列表没有被被删除，并且不是新增播放列表，那么可以默认选择改项，否则选择默认的全部歌曲列表
 				if (list.contains(selection1)
 						&& !selection1
@@ -279,7 +334,6 @@ public class LocalActivity extends ListFragment {
 
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
-			Log.i("spinner", "spinner 无选择");
 		}
 
 	}
@@ -289,12 +343,26 @@ public class LocalActivity extends ListFragment {
 		@Override
 		public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 				int arg2, long arg3) {
+			if (selection.equals(getString(R.string.playlist_default))) {
+				popubutton1.setVisibility(View.INVISIBLE);
+			} else {
+				popubutton1.setVisibility(View.VISIBLE);
+			}
+			popu.showAtLocation(parent, Gravity.CENTER, 0, 0);
+
+			cursor.moveToPosition(arg2);
+			String mp3name = cursor.getString(cursor
+					.getColumnIndex(getString(R.string.TILTE)));
+			String mp3path = cursor.getString(cursor
+					.getColumnIndex(getString(R.string.URL)));
+			int id = cursor.getInt(cursor
+					.getColumnIndex(android.provider.BaseColumns._ID));
+			yesnodialog = new YesOrNoDialog(selection, mp3name, mp3path, id);
 			return true;
 		}
-
 	}
 
-	// 点击播放列表里的歌曲，跳转播放页面
+	// 点击播放列表里的歌曲，在播放界面更新相关类容并且后台播放
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		cursor.moveToPosition(position);
@@ -316,7 +384,6 @@ public class LocalActivity extends ListFragment {
 	// 点击菜单项的事件
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.i("LocalActivity", "LocalActivity is isVisible" + isVisible());
 		String listname = spinner.getSelectedItem().toString();
 		if (isVisible()) {
 			if (!listname.equals(getString(R.string.playlist_default))
@@ -354,6 +421,7 @@ public class LocalActivity extends ListFragment {
 		public void onReceive(Context arg0, Intent arg1) {
 			if (arg1.getAction().equals(Intent.ACTION_MEDIA_SCANNER_STARTED)) {
 				Log.i(tag, "MediaScannerReceiver 开始扫描");
+				// refreshableView.setAbleToPull(false);
 			} else if (arg1.getAction().equals(
 					Intent.ACTION_MEDIA_SCANNER_FINISHED)) {
 				Log.i(tag, "MediaScannerReceiver 结束扫描");
@@ -362,6 +430,7 @@ public class LocalActivity extends ListFragment {
 				Thread2 thread2 = new Thread2();
 				thread2.start();
 				refreshableView.finishRefreshing();
+				// refreshableView.setAbleToPull(true);
 				Message msg = new Message();
 				msg.what = 4;
 				myhandler.sendMessage(msg);
@@ -372,19 +441,15 @@ public class LocalActivity extends ListFragment {
 
 	@Override
 	public void onPause() {
-		Log.i("LocalActivity", "LocalActivity onPause");
 		super.onPause();
 		// activiti暂停时保存当前选择的播放列表
 		if (selection != null) {
 			SharedPreferences.Editor ed = mPrefs.edit();
 			if (!selection.equals(getString(R.string.playlist_default_last))) {
 				ed.putString("spinner_value", selection);
-				Log.i("LocalActivity ", "SharedPreferences is" + selection);
 			} else {
 				ed.putString("spinner_value",
 						getString(R.string.playlist_default));
-				Log.i("LocalActivity ", "SharedPreferences is"
-						+ getString(R.string.playlist_default));
 			}
 			ed.commit();
 		}
@@ -392,7 +457,6 @@ public class LocalActivity extends ListFragment {
 
 	@Override
 	public void onStop() {
-		Log.i("LocalActivity", "LocalActivity is onStop");
 		super.onStop();
 		if (myhandler != null) {
 			myhandler.removeCallbacksAndMessages(null);
@@ -415,8 +479,6 @@ public class LocalActivity extends ListFragment {
 		}
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();
-			Log.i("localactivity onDestroy",
-					"localactivity onDestroy cursor 关闭");
 		}
 	}
 

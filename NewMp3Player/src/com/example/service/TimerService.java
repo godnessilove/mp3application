@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.newmp3player.MainActivity;
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class TimerService extends Service {
 	private MyHandler myhandler;
@@ -19,11 +17,15 @@ public class TimerService extends Service {
 	private int alltime = 0;
 	private int i = 0;
 	public static String TIMESTOPACTION = "time_out";
-	private String tag = "TimerService";
+	//private String tag = "TimerService";
 
 	private final MyBinder myBinder = new MyBinder();
 
 	public class MyBinder extends Binder {
+		/**
+		 * 返回改service
+		 * @return
+		 */
 		public TimerService getService() {
 			return TimerService.this;
 		}
@@ -46,7 +48,6 @@ public class TimerService extends Service {
 
 	@Override
 	public void onDestroy() {
-		Log.i(tag, " TimerService is onDestroy");
 		super.onDestroy();
 	}
 
@@ -68,43 +69,52 @@ public class TimerService extends Service {
 
 	}
 
+	//计时.service内部的计时，为了activity退出后倒计时继续prefereceActivity倒计时每次进入的时候读取的就是这里的数据
 	Runnable count = new Runnable() {
 
 		@Override
 		public void run() {
 			i += 1;
 			if (i < alltime) {
-				Log.i(tag, " TimerService`i is " + i);
 				myhandler.postDelayed(count, 1000);
 			} else {
-				
-				
-					
+				//计时结束后，将偏好设置里的定时选项重置为0
 				SharedPreferences sh = PreferenceManager
 						.getDefaultSharedPreferences(getApplicationContext());
 				SharedPreferences.Editor ed = sh.edit();
 				ed.putString("timer", "0");
 				ed.commit();
+
+				// 休眠1秒，为了保证所有activity都正常退出，必须要等待preferenceacti发起的FLAG_ACTIVITY_CLEAR_TOPintent，此intent去让主mainactivity自主关闭，从而达到播放界面自动关闭，从而释放mp3service的绑定，一切正常处理
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
-				//休眠1秒，为了保证所有activity都正常退出，必须要等待preferenceacti发起的FLAG_ACTIVITY_CLEAR_TOPintent，此intent去让主mainactivity自主关闭，从而达到播放界面自动关闭，从而释放mp3service的绑定，一切正常处理
-				  try { Thread.sleep(1000); } catch (InterruptedException e) {
-				  // TODO Auto-generated catch block 
-					  e.printStackTrace(); }
-				
-				  
-				  Intent stopintent = new Intent(Mp3PlayService.STOP_ACTION);
-					sendBroadcast(stopintent);
-					
+				//通知mp3service，倒计时结束，关闭service
+				Intent stopintent = new Intent(Mp3PlayService.TIME_OUT_ACTION);
+				sendBroadcast(stopintent);
+
+				//停止自身service
 				stopService();
 			}
 		}
 	};
 
+	/**
+	 * 停止service
+	 */
 	public void stopService() {
 		myhandler.removeCallbacks(count);
 		stopSelf();
 	}
 
+	/**
+	 * 获取还剩下多少时间
+	 * @return
+	 */
 	public int getTime() {
 		return alltime - i;
 	}
@@ -113,7 +123,6 @@ public class TimerService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		msg = intent.getStringExtra("flag");
 		alltime = Integer.valueOf(intent.getStringExtra("alltime"));
-		Log.i(tag, "msg is" + msg + ",alltime is " + alltime);
 		if (msg.equals("start")) {
 			myhandler.removeCallbacks(count);
 			// 重置计数变量
@@ -127,7 +136,6 @@ public class TimerService extends Service {
 
 	@Override
 	public boolean onUnbind(Intent intent) {
-		Log.i(tag, " TimerService is onUnbind");
 		return super.onUnbind(intent);
 	}
 

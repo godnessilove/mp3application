@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     
     <!-- 远程更新的网址 -->
-    <string name="https">http://192.168.2.3:8080/mp3/</string>
+    <string name="https">http://192.168.2.8:8080/mp3/</string>
     
     <string name="TabPlay">播放</string>
     <string name="TabPlayList">列表</string>
@@ -63,6 +63,10 @@
 	<string name="deletesuccess">删除成功</string>
 	<string name="deletefail">删除失敗</string>
 	
+	<!-- 长按歌曲弹出popu -->
+	<string name="deleterecord">删除记录</string>
+	<string name="deletefile">删除文件</string>
+	
 	<!-- mp3通知栏中的播放状态 -->
 	<string name="mp3NotifiPlayTextIng">正在播放</string>
 	<string name="mp3NotifiPlayTextPause">暂停播放</string>
@@ -107,4 +111,8 @@
 	<string name="scanfilter">扫描过滤</string>
 	<string name="scansize">选择过滤音乐大小</string>
 	<string name="choose_timer">choose_timer</string>
+	
+	<string name="time_close">定时关闭</string>
+	<string name="close_time">定时关闭时间</string>
+	<string name="time_choose">请选择定时关闭时间</string>
 </resources>

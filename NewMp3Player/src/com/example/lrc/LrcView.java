@@ -1,8 +1,6 @@
 package com.example.lrc;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import com.example.newmp3player.R;
 
@@ -18,16 +16,19 @@ public class LrcView extends TextView {
 	private Paint mPaint;
 	private HashMap<Long, String> lrcs;
 	public int index = 0;
-	private static int max = 15;
+	public int max = 15;
+
+	public void setMax(int max) {
+		this.max = max;
+	}
+
 	private int textsize;
 	private int midtextsize;
 	private Long[] times;
 	private String text;
 	public float mTouchHistoryY;
-	//private static final int DY = 30; // 每一行的间隔
+	// private static final int DY = 30; // 每一行的间隔
 	private Context context;
-	private float fontScale;
-
 
 	public LrcView(Context context) {
 		super(context);
@@ -46,9 +47,6 @@ public class LrcView extends TextView {
 
 	public void setLrcs(HashMap<Long, String> lrcs) {
 		this.lrcs = lrcs;
-		if (lrcs != null) {
-			this.max = getMaxLength(lrcs);
-		}
 	}
 
 	public void setIndex(int index) {
@@ -74,36 +72,19 @@ public class LrcView extends TextView {
 		mPaint.setTypeface(Typeface.SERIF);
 		// 中间对齐
 		mPaint.setTextAlign(Paint.Align.CENTER);
-		//px转换sp的系数
-		//fontScale = context.getResources().getDisplayMetrics().scaledDensity; 
-		
-		
+		// px转换sp的系数
+		// fontScale = context.getResources().getDisplayMetrics().scaledDensity;
 
-	}
-
-	public static int getMaxLength(HashMap<Long, String> lrcs) {
-		//int max = 0;
-		if (lrcs != null) {
-			Collection<String> temp = lrcs.values();
-			for (Iterator<String> iterator = temp.iterator(); iterator
-					.hasNext();) {
-				String string = (String) iterator.next();
-				if (max <= string.length()) {
-					max = string.length();
-				}
-			}
-		}
-		return max;
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		 
+
 		int allheight = getHeight();
 		int allwidth = getWidth();
-		textsize = allwidth  / max < 30 ? 30 : allwidth  / max;
-		midtextsize =allwidth  / max < 35 ? 35 : allwidth  / max + 5;
+		textsize = allwidth / max < 30 ? 30 : allwidth / max;
+		midtextsize = allwidth / max < 35 ? 35 : allwidth / max + 5;
 		if (lrcs != null && times != null) {
 			// 中间当前歌词
 			mPaint.setAlpha(255);

@@ -1,26 +1,20 @@
 package com.example.newmp3player;
 
-import com.example.newmp3player.TabPlayFragment.Receiver;
-import com.example.service.Mp3PlayService;
+import java.util.Locale;
+
 import com.example.service.TimerService;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.util.Log;
@@ -40,7 +34,7 @@ public class PreferencesActi extends Activity {
 		private Service timeservice;
 		private ListPreference listpreference_size;
 		private ListPreference listpreference_timer;
-		private CheckBoxPreference checkboxpreferece;
+		// private CheckBoxPreference checkboxpreferece;
 		private TimeCount timecount;
 
 		@Override
@@ -62,7 +56,8 @@ public class PreferencesActi extends Activity {
 			listpreference_timer.setSummary(summary.toString());
 			listpreference_timer.setOnPreferenceChangeListener(this);
 
-			checkboxpreferece = (CheckBoxPreference) findPreference("choose_timer");
+			// checkboxpreferece = (CheckBoxPreference)
+			// findPreference("choose_timer");
 		}
 
 		@Override
@@ -114,8 +109,6 @@ public class PreferencesActi extends Activity {
 					timerservice.putExtra("flag", "start");
 					timerservice.putExtra("alltime", newValue.toString());
 					getActivity().startService(timerservice);
-					// int time = ((TimerService) timeservice).getTime();
-					// og.i(tag, " time is" +time);
 					if (timecount != null) {
 						timecount.cancel();
 					}
@@ -154,11 +147,17 @@ public class PreferencesActi extends Activity {
 			return true;
 		}
 
+		/**
+		 * 将毫秒转换成00:00格式
+		 * 
+		 * @param duration
+		 * @return
+		 */
 		public String showTime(long duration) {
 			duration = duration / 1000;
 			int min = (int) (duration / 60);
 			int second = (int) duration % 60;
-			return String.format("%02d:%02d", min, second);
+			return String.format(Locale.getDefault(), "%02d:%02d", min, second);
 		}
 
 		class TimeCount extends CountDownTimer {
@@ -174,7 +173,7 @@ public class PreferencesActi extends Activity {
 					getActivity().unbindService(conn);
 					timeservice = null;
 				}
-				//可见说明父activity也没有onDestroy,所以一并关闭掉，这个activity会自动关闭，因为使用了finishOnTaskLaunch
+				// 可见说明父activity也没有onDestroy,所以一并关闭掉，这个activity会自动关闭，因为使用了finishOnTaskLaunch
 				if (Prefs1Fragment.this.isVisible()) {
 					Intent intent = new Intent();
 					intent.setClass(getActivity(), MainActivity.class);
@@ -186,7 +185,6 @@ public class PreferencesActi extends Activity {
 			@Override
 			public void onTick(long arg0) {
 				String time = showTime(arg0);
-				Log.i(tag, "arg0 is " + arg0 / 1000);
 				listpreference_timer.setSummary(time);
 			}
 

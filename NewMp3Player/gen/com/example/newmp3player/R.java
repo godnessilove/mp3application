@@ -66,15 +66,16 @@ public final class R {
         public static final int PlayMode=0x7f0a001c;
         public static final int RelativeLayout1=0x7f0a0006;
         public static final int Singer=0x7f0a001d;
-        public static final int action_settings=0x7f0a002b;
+        public static final int action_settings=0x7f0a002c;
         public static final int add=0x7f0a0003;
         public static final int adddialog=0x7f0a0007;
         public static final int alltime=0x7f0a0024;
-        public static final int arrow=0x7f0a0027;
+        public static final int arrow=0x7f0a0028;
         public static final int button1=0x7f0a000a;
+        public static final int button2=0x7f0a0025;
         public static final int choose=0x7f0a0004;
-        public static final int description=0x7f0a0029;
-        public static final int fragment1=0x7f0a0025;
+        public static final int description=0x7f0a002a;
+        public static final int fragment1=0x7f0a0026;
         public static final int fragment_container=0x7f0a0008;
         public static final int fragment_container1=0x7f0a0009;
         public static final int imageBUtton4=0x7f0a0012;
@@ -90,8 +91,8 @@ public final class R {
         public static final int multiple_checkbox=0x7f0a0018;
         public static final int pager=0x7f0a0000;
         public static final int progressBar1=0x7f0a000f;
-        public static final int progress_bar=0x7f0a0028;
-        public static final int pull_to_refresh_head=0x7f0a0026;
+        public static final int progress_bar=0x7f0a0029;
+        public static final int pull_to_refresh_head=0x7f0a0027;
         public static final int refreshable_view=0x7f0a0014;
         public static final int seekBar1=0x7f0a0021;
         public static final int spinner1=0x7f0a0015;
@@ -100,7 +101,7 @@ public final class R {
         public static final int textView3=0x7f0a0010;
         public static final int textView4=0x7f0a0011;
         public static final int textViewId=0x7f0a0013;
-        public static final int updated_at=0x7f0a002a;
+        public static final int updated_at=0x7f0a002b;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -115,34 +116,36 @@ public final class R {
         public static final int mp3player=0x7f030009;
         public static final int notification=0x7f03000a;
         public static final int playfragment=0x7f03000b;
-        public static final int preferece_main=0x7f03000c;
-        public static final int pull_to_refresh=0x7f03000d;
-        public static final int remote_mp3_item=0x7f03000e;
+        public static final int popu=0x7f03000c;
+        public static final int preferece_main=0x7f03000d;
+        public static final int pull_to_refresh=0x7f03000e;
+        public static final int remote_mp3_item=0x7f03000f;
+        public static final int yesnodialog=0x7f030010;
     }
     public static final class menu {
         public static final int main=0x7f090000;
     }
     public static final class string {
-        public static final int ALBUM=0x7f07002e;
-        public static final int ALBUM_ID=0x7f07002f;
-        public static final int ARTIST=0x7f07002d;
+        public static final int ALBUM=0x7f070030;
+        public static final int ALBUM_ID=0x7f070031;
+        public static final int ARTIST=0x7f07002f;
         public static final int Album=0x7f070009;
-        public static final int DURATION=0x7f070031;
-        public static final int ID=0x7f07002a;
-        public static final int LRCPATH=0x7f070033;
-        public static final int MP3_ID=0x7f070037;
+        public static final int DURATION=0x7f070033;
+        public static final int ID=0x7f07002c;
+        public static final int LRCPATH=0x7f070035;
+        public static final int MP3_ID=0x7f070039;
         public static final int Mp3Name=0x7f070007;
-        public static final int SIZE=0x7f070032;
-        public static final int STATE=0x7f070034;
+        public static final int SIZE=0x7f070034;
+        public static final int STATE=0x7f070036;
         public static final int Singer=0x7f070008;
-        public static final int TABLE_NAME=0x7f070036;
-        public static final int THUMB=0x7f07002c;
-        public static final int TILTE=0x7f07002b;
+        public static final int TABLE_NAME=0x7f070038;
+        public static final int THUMB=0x7f07002e;
+        public static final int TILTE=0x7f07002d;
         public static final int TabDown=0x7f070005;
         public static final int TabMore=0x7f070006;
         public static final int TabPlay=0x7f070003;
         public static final int TabPlayList=0x7f070004;
-        public static final int URL=0x7f070030;
+        public static final int URL=0x7f070032;
         public static final int action_settings=0x7f070001;
         /**  ChooseMp3Activity中的添加按钮 、全选/反选按钮,默认值
          */
@@ -154,14 +157,19 @@ public final class R {
         public static final int addtrue=0x7f07001c;
         /**  记录播放列表的表 
          */
-        public static final int alltablename=0x7f070035;
+        public static final int alltablename=0x7f070037;
         public static final int app_name=0x7f070000;
         public static final int choose=0x7f070019;
-        public static final int choose_timer=0x7f070048;
+        public static final int choose_timer=0x7f07004a;
+        public static final int close_time=0x7f07004c;
         public static final int deleteFalse=0x7f07000d;
         public static final int deletebutton=0x7f070018;
         public static final int deletefail=0x7f070026;
         public static final int deletefalse=0x7f07001f;
+        public static final int deletefile=0x7f070028;
+        /**  长按歌曲弹出popu 
+         */
+        public static final int deleterecord=0x7f070027;
         public static final int deletesuccess=0x7f070025;
         /**  ChooseMp3Activity删除失败 
          */
@@ -172,25 +180,25 @@ public final class R {
         public static final int dialogpositive=0x7f070020;
         /**  下载歌曲通知栏显示的text 
          */
-        public static final int downNotifiText=0x7f070038;
-        public static final int downNotifiTextErr=0x7f070039;
-        public static final int downNotifiTextExist=0x7f07003c;
-        public static final int downNotifiTextIng=0x7f07003a;
-        public static final int downNotifiTextNegative=0x7f07003d;
-        public static final int downNotifiTextOK=0x7f07003b;
-        public static final int downNotifithree=0x7f07003e;
+        public static final int downNotifiText=0x7f07003a;
+        public static final int downNotifiTextErr=0x7f07003b;
+        public static final int downNotifiTextExist=0x7f07003e;
+        public static final int downNotifiTextIng=0x7f07003c;
+        public static final int downNotifiTextNegative=0x7f07003f;
+        public static final int downNotifiTextOK=0x7f07003d;
+        public static final int downNotifithree=0x7f070040;
         /**  远程更新的网址 
          */
         public static final int https=0x7f070002;
         public static final int input=0x7f070024;
         /**  mp3通知栏中的播放状态 
          */
-        public static final int mp3NotifiPlayTextIng=0x7f070027;
-        public static final int mp3NotifiPlayTextPause=0x7f070028;
+        public static final int mp3NotifiPlayTextIng=0x7f070029;
+        public static final int mp3NotifiPlayTextPause=0x7f07002a;
         /**  显示歌词时，若是没有，显示的内容 
          */
         public static final int nolrc=0x7f070016;
-        public static final int not_updated_yet=0x7f070042;
+        public static final int not_updated_yet=0x7f070044;
         /**  播放列表，全部歌曲，必须要有 ,全部歌曲排第一个，新建播放列表放最后一个
          */
         public static final int playlist_default=0x7f070014;
@@ -199,11 +207,11 @@ public final class R {
         /**  输入为空的时候的提示,已经存在的提示 ,删除成功提示删除成功
          */
         public static final int playlistnotnull=0x7f070022;
-        public static final int pull_to_refresh=0x7f07003f;
-        public static final int refreshing=0x7f070041;
-        public static final int release_to_refresh=0x7f070040;
-        public static final int scanfilter=0x7f070046;
-        public static final int scansize=0x7f070047;
+        public static final int pull_to_refresh=0x7f070041;
+        public static final int refreshing=0x7f070043;
+        public static final int release_to_refresh=0x7f070042;
+        public static final int scanfilter=0x7f070048;
+        public static final int scansize=0x7f070049;
         public static final int tab000_menu=0x7f070010;
         public static final int tab111_menu_1=0x7f070012;
         public static final int tab111_menu_2=0x7f070013;
@@ -218,12 +226,14 @@ public final class R {
         public static final int tab_set=0x7f07000f;
         /**  本地指定mp3目录下所有的mp3文件信息表 
          */
-        public static final int tablelocalname=0x7f070029;
-        public static final int time_error=0x7f070045;
+        public static final int tablelocalname=0x7f07002b;
+        public static final int time_choose=0x7f07004d;
+        public static final int time_close=0x7f07004b;
+        public static final int time_error=0x7f070047;
         public static final int unchoose=0x7f07001a;
         public static final int updateOk=0x7f07000e;
-        public static final int updated_at=0x7f070043;
-        public static final int updated_just_now=0x7f070044;
+        public static final int updated_at=0x7f070045;
+        public static final int updated_just_now=0x7f070046;
     }
     public static final class style {
         /** 

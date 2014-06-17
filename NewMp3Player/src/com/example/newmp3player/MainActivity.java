@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.dialog.NewPlaylistDialog;
+import com.example.dialog.YesOrNoDialog;
 import com.example.sqlite.DProvider;
 
 import android.annotation.SuppressLint;
@@ -24,7 +25,7 @@ import android.widget.Spinner;
 
 @SuppressLint("NewApi")
 public class MainActivity extends FragmentActivity implements
-		NewPlaylistDialog.DialogListener ,LocalActivity.LocalFragmentListener{
+		NewPlaylistDialog.DialogListener ,LocalActivity.LocalFragmentListener,YesOrNoDialog.YesOrNoDialogListener{
 	ViewPager mViewPager;
 	TabsAdapter mTabsAdapter;
 
@@ -234,6 +235,22 @@ public class MainActivity extends FragmentActivity implements
 					.equals("class com.example.newmp3player.TabPlayFragment")){
 				TabPlayFragment fragment = (TabPlayFragment)fragments.get(i);
 				fragment.SetMp3Info(bundle);
+				break;
+			}
+		}
+	}
+
+
+
+	@Override
+	public void onItemSelected() {
+		List<Fragment> fragments = getSupportFragmentManager().getFragments();
+		for (int i = 0; i < fragments.size(); i++) {
+			//如果index是0，表示是newplaylistdialog
+			if (fragments.get(i).getClass().toString()
+					.equals("class com.example.newmp3player.LocalActivity")) {
+				LocalActivity fragment = (LocalActivity)fragments.get(i);
+				fragment.updateList();
 				break;
 			}
 		}
